@@ -1,22 +1,33 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "Callbacks.hpp"
 
 class Window
 {
 private:
     GLFWwindow* window;
-    void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+    int width;
+    int height;
+    const char* title;
 public:
     Window(int width, int height, const char* title);
     GLFWwindow* getWindow();
     bool shouldClose();
+    void init();
     void swapAndPoll();
+    void update(float dt);
     ~Window();
 };
 
 Window::Window(int width, int height, const char* title)
 {
+    this->width = width;
+    this->height = height;
+    this->title = title;
+}
+
+void Window::init() {
     //window initialization
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -27,16 +38,14 @@ Window::Window(int width, int height, const char* title)
     #endif
 
     //create window object
-    this->window = glfwCreateWindow(width, height, title, NULL, NULL);
-    if (this->window == NULL) {
+    window = glfwCreateWindow(this->width, this->height, this->title, NULL, NULL);
+    if (window == NULL) {
         //error if failed to create window
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
     }
     glfwMakeContextCurrent(window);
-    //TODO: figure out how to work around this problem
-    // callback &callbacks = callback::getInstance();
-    // glfwSetFramebufferSizeCallback(this->window, &callback::framebuffer_size_callback);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl; 
@@ -53,10 +62,16 @@ GLFWwindow* Window::getWindow() {
 }
 
 bool Window::shouldClose() {
-    return glfwWindowShouldClose;
+    return glfwWindowShouldClose(this->window);
 }
 
 void Window::swapAndPoll() {
     glfwSwapBuffers(this->window);
     glfwPollEvents();
+}
+
+void Window::update(float dt) {
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    this->swapAndPoll();
 }
