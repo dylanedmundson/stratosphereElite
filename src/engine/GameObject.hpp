@@ -1,0 +1,1 @@
+//TODO: represents an object in the game and can contain multiple components

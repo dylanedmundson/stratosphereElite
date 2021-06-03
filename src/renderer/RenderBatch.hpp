@@ -1,0 +1,1 @@
+//TODO: handles batch rendering of objects for imporved speed and efficiency

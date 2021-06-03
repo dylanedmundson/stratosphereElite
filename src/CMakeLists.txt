@@ -9,8 +9,8 @@ set(
 
 set(
     UTIL_LIB_SOURCES
-    utils/Shader.hpp
-    utils/Shader.cpp
+    renderer/Shader.hpp
+    renderer/Shader.cpp
 )
 
 set(
@@ -22,15 +22,29 @@ set(
 set(
     ENGINE_LIB_SOURCES
     engine/Window.hpp
-    engine/Callbacks.hpp
+    engine/Window.cpp
+    engine/WindowCallbacks.hpp
+)
+
+set(
+    RENDERER_LIB_SOURCES
+    renderer/Texture.hpp
+    renderer/Texture.cpp
+)
+
+set(
+    COMPONENTS_LIB_SOURCES
+    components/Component.hpp
 )
 
 add_library(
     LINK_LIBS
     glad ${GLAD_LIB_SOURCES}
-    utils ${UTIL_LIB_SOURCES}
+    renderer ${UTIL_LIB_SOURCES}
     stb ${STB_LIB_SOURCES}
     engine ${ENGINE_LIB_SOURCES}
+    renderer ${RENDERER_LIB_SOURCES}
+    components ${COMPONENTS_LIB_SOURCES}
 )
 
 target_include_directories(
