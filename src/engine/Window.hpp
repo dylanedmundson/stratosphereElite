@@ -5,7 +5,7 @@
 #include <iostream>
 #include "WindowCallbacks.hpp"
 #include "utils/ArrayList.hpp"
-#include "engine/GameObject.hpp"
+#include "gameobjects/GameObject.hpp"
 
 class Window
 {

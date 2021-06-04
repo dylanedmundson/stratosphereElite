@@ -4,7 +4,6 @@ Window::Window(int width, int height, const char* title)
     this->width = width;
     this->height = height;
     this->title = title;
-    this->gameObjects = ArrayList<GameObject>();
 }
 
 void Window::init() {

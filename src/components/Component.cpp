@@ -1,4 +1,6 @@
+#include "gameobjects/GameObject.hpp"
 #include "Component.hpp"
+
 unsigned int Component::ID_COUNTER = 0;
 
 Component::Component()
@@ -25,4 +27,8 @@ void Component::update(float dt) {
 
 void Component::start() {
     
+}
+
+void Component::setGameObject(GameObject* go) {
+    this->go = go;
 }

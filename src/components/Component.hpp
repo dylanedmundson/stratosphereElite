@@ -4,15 +4,16 @@
 //health component etc
 
 //ref: https://www.raywenderlich.com/2806-introduction-to-component-based-architecture-in-games
-#pragma
 #ifndef COMPONENT
 #define COMPONENT
+class GameObject; //foward declaration depends on GameObject must include both in source
 
 class Component
 {
 private:
     int uid;
     static unsigned int ID_COUNTER;
+    GameObject* go;
 public:
     Component();
     int getUid();
@@ -20,5 +21,6 @@ public:
     virtual void update(float dt);
     virtual void start();
     bool operator ==(Component right);
+    void setGameObject(GameObject* go);
 };
 #endif

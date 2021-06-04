@@ -24,8 +24,12 @@ set(
     engine/Window.hpp
     engine/Window.cpp
     engine/WindowCallbacks.hpp
-    engine/GameObject.hpp
-    engine/GameObject.cpp
+)
+
+set(
+    GAMEOBJECTS_LIB_SOURCES
+    gameobjects/GameObject.hpp
+    gameobjects/GameObject.cpp
 )
 
 set(
@@ -50,6 +54,7 @@ add_library(
     engine ${ENGINE_LIB_SOURCES}
     renderer ${RENDERER_LIB_SOURCES}
     components ${COMPONENTS_LIB_SOURCES}
+    gameobjects ${GAMEOBJECTS_LIB_SOURCES}
 )
 
 target_include_directories(
