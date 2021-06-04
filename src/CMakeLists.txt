@@ -9,8 +9,8 @@ set(
 
 set(
     UTIL_LIB_SOURCES
-    renderer/Shader.hpp
-    renderer/Shader.cpp
+    utils/ArrayList.hpp
+    utils/List.hpp
 )
 
 set(
@@ -24,23 +24,28 @@ set(
     engine/Window.hpp
     engine/Window.cpp
     engine/WindowCallbacks.hpp
+    engine/GameObject.hpp
+    engine/GameObject.cpp
 )
 
 set(
     RENDERER_LIB_SOURCES
     renderer/Texture.hpp
     renderer/Texture.cpp
+    renderer/Shader.hpp
+    renderer/Shader.cpp
 )
 
 set(
     COMPONENTS_LIB_SOURCES
     components/Component.hpp
+    components/Component.cpp
 )
 
 add_library(
     LINK_LIBS
     glad ${GLAD_LIB_SOURCES}
-    renderer ${UTIL_LIB_SOURCES}
+    utils ${UTIL_LIB_SOURCES}
     stb ${STB_LIB_SOURCES}
     engine ${ENGINE_LIB_SOURCES}
     renderer ${RENDERER_LIB_SOURCES}

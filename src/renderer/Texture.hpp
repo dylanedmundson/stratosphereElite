@@ -1,3 +1,5 @@
+#ifndef TEXTURE
+#define TEXTURE
 //TODO: handles all texture loading and parameter setting
 #include <iostream>
 #include <string.h>
@@ -19,3 +21,4 @@ public:
     int getHeight();
     unsigned int getID();
 };
+#endif

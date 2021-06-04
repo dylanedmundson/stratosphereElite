@@ -4,6 +4,7 @@ Window::Window(int width, int height, const char* title)
     this->width = width;
     this->height = height;
     this->title = title;
+    this->gameObjects = ArrayList<GameObject>();
 }
 
 void Window::init() {
@@ -52,5 +53,9 @@ void Window::swapAndPoll() {
 void Window::update(float dt) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+    int goLength = gameObjects.getSize();
+    for (int i = 0; i < goLength; i++) {
+        gameObjects.get(i).update(dt);
+    }
     this->swapAndPoll();
 }

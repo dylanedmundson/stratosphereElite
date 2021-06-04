@@ -1,7 +1,11 @@
+#ifndef WINDOW
+#define WINDOW
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "WindowCallbacks.hpp"
+#include "utils/ArrayList.hpp"
+#include "engine/GameObject.hpp"
 
 class Window
 {
@@ -10,6 +14,7 @@ private:
     int width;
     int height;
     const char* title;
+    ArrayList<GameObject> gameObjects;
 public:
     Window(int width, int height, const char* title);
     GLFWwindow* getWindow();
@@ -19,3 +24,4 @@ public:
     void update(float dt);
     ~Window();
 };
+#endif
