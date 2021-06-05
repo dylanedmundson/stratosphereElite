@@ -31,4 +31,13 @@ void Component::start() {
 
 void Component::setGameObject(GameObject* go) {
     this->go = go;
+
+}
+
+void Component::setName(std::string newName) {
+    this->name = newName;
+}
+
+std::string Component::getName() {
+    return this->name;
 }
