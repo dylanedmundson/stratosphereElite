@@ -24,5 +24,13 @@ void Component::update(float dt) {
 }
 
 void Component::start() {
-    
+
+}
+
+void Component::setName(std::string newName) {
+    this->name = newName;
+}
+
+std::string Component::getName() {
+    return this->name;
 }

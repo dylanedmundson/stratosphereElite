@@ -7,18 +7,23 @@
 #pragma
 #ifndef COMPONENT
 #define COMPONENT
+#include <iostream>
+#include <string.h>
 
 class Component
 {
 private:
     int uid;
     static unsigned int ID_COUNTER;
+    std::string name;
 public:
     Component();
     int getUid();
     ~Component();
     virtual void update(float dt);
     virtual void start();
+    virtual void setName(std::string newName);
+    virtual std::string getName();
     bool operator ==(Component right);
 };
 #endif

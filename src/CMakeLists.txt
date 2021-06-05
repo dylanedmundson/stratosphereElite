@@ -34,6 +34,8 @@ set(
     renderer/Texture.cpp
     renderer/Shader.hpp
     renderer/Shader.cpp
+    renderer/RenderBatch.hpp
+    renderer/RenderBatch.cpp
 )
 
 set(
