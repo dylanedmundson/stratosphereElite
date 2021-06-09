@@ -11,6 +11,8 @@ set(
     UTIL_LIB_SOURCES
     utils/ArrayList.hpp
     utils/List.hpp
+    utils/Color.hpp
+    utils/Color.cpp
 )
 
 set(
@@ -24,29 +26,31 @@ set(
     engine/Window.hpp
     engine/Window.cpp
     engine/WindowCallbacks.hpp
+    engine/Shader.hpp
+    engine/Shader.cpp
+    engine/Camera.hpp
+    engine/Camera.cpp
 )
 
 set(
     GAMEOBJECTS_LIB_SOURCES
+
     gameobjects/GameObject.hpp
     gameobjects/GameObject.cpp
+
+    gameobjects/primitives/Cube.hpp
+    gameobjects/primitives/Cube.cpp
+    
+    gameobjects/components/Component.hpp
+    gameobjects/components/Component.cpp
+    gameobjects/components/RenderBatch.hpp
+    gameobjects/components/RenderBatch.cpp
+    gameobjects/components/Renderer.hpp
+    gameobjects/components/Renderer.cpp
+    gameobjects/components/Texture.hpp
+    gameobjects/components/Texture.cpp
 )
 
-set(
-    RENDERER_LIB_SOURCES
-    renderer/Texture.hpp
-    renderer/Texture.cpp
-    renderer/Shader.hpp
-    renderer/Shader.cpp
-    renderer/RenderBatch.hpp
-    renderer/RenderBatch.cpp
-)
-
-set(
-    COMPONENTS_LIB_SOURCES
-    components/Component.hpp
-    components/Component.cpp
-)
 
 add_library(
     LINK_LIBS
@@ -54,8 +58,6 @@ add_library(
     utils ${UTIL_LIB_SOURCES}
     stb ${STB_LIB_SOURCES}
     engine ${ENGINE_LIB_SOURCES}
-    renderer ${RENDERER_LIB_SOURCES}
-    components ${COMPONENTS_LIB_SOURCES}
     gameobjects ${GAMEOBJECTS_LIB_SOURCES}
 )
 

@@ -1,26 +1,44 @@
 #ifndef GAME_OBJECT
 #define GAME_OBJECT
 
-#include "utils/List.hpp"
 #include "utils/ArrayList.hpp"
-#include "components/Component.hpp"
 #include <iostream>
+#include <string.h>
+#include <glm/glm.hpp>
+#include "gameobjects/components/Component.hpp"
+#include "gameobjects/components/Renderer.hpp"
+
+//FIXME: Gameobject will contain pointers to all possible components
+//and each compoenent will be switch on and off using a boolean value
+
+//alternatively figure out a way to allow component to access GameObject methods
 
 class GameObject
 {
+protected:
+    ArrayList<Component*>* components; //holds all components
+    glm::vec3 position; //needed for objects position
+    Renderer* renderer; //needed for rendering
+    Shader* shader; // needed for changes to matirces
+    virtual void generateRenderer();
+    virtual void generateShader();
 private:
-    ArrayList<Component> components;
     int uid;
     static unsigned int ID_COUNTER;
 public:
     GameObject();
     ~GameObject();
-    void addComponent(Component c);
-    Component removeComponent(Component c);
-    void update(float dt);
-    void start();
-    ArrayList<Component> getAllComponents();
+    void addComponent(Component* c);
+    Component* removeComponent(Component* c);
+    ArrayList<Component*>* getAllComponents();
+    Component* getComponent(std::string);
     bool operator ==(GameObject rightHand);
     int getUid();
+    Renderer* getRenderer();
+    Shader* getShader();
+
+    virtual void update(float dt);
+    virtual void start();
 };
+
 #endif

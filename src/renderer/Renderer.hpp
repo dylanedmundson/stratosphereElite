@@ -1,1 +1,0 @@
-//TODO: handles rendering game objects, batch rendering used here

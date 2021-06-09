@@ -58,3 +58,11 @@ int Texture::getWidth() {
 int Texture::getHeight() {
     return height;
 }
+
+void Texture::update(float dt) {
+    //TODO: handle animations
+}
+
+void Texture::start() {
+    Component::start();
+}

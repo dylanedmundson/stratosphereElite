@@ -14,7 +14,7 @@ private:
     int width;
     int height;
     const char* title;
-    ArrayList<GameObject> gameObjects;
+    ArrayList<GameObject*>* gameObjects;
 public:
     Window(int width, int height, const char* title);
     GLFWwindow* getWindow();
@@ -22,6 +22,7 @@ public:
     void init();
     void swapAndPoll();
     void update(float dt);
+    void addGameObject(GameObject* go);
     ~Window();
 };
 #endif

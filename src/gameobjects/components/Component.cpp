@@ -1,7 +1,8 @@
-#include "gameobjects/GameObject.hpp"
 #include "Component.hpp"
 
 unsigned int Component::ID_COUNTER = 0;
+const char* Component::RENDERER_NAME = "renderer";
+const char* Component::TEXTURE_NAME = "texture";
 
 Component::Component()
 {
@@ -27,11 +28,6 @@ void Component::update(float dt) {
 
 void Component::start() {
     
-}
-
-void Component::setGameObject(GameObject* go) {
-    this->go = go;
-
 }
 
 void Component::setName(std::string newName) {

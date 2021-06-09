@@ -3,37 +3,42 @@
 unsigned int GameObject::ID_COUNTER = 0;
 GameObject::GameObject()
 {
-    this->components = ArrayList<Component>();
+    this->components = new ArrayList<Component*>();
     uid = ID_COUNTER;
     ID_COUNTER++;
 }
 
 GameObject::~GameObject()
 {
-    this->components.~ArrayList();
+    delete this->components;
+    components = nullptr;
+    delete this->renderer;
+    renderer = nullptr;
+    delete this->shader;
+    shader = nullptr;
 }
 
-void GameObject::addComponent(Component c) {
-    this->components.add(c);
+void GameObject::addComponent(Component* c) {
+    this->components->add(c);
 }
 
-Component GameObject::removeComponent(Component c) {
-    return this->components.remove(c);
+Component* GameObject::removeComponent(Component* c) {
+    return this->components->remove(c);
 }
 
 void GameObject::update(float dt) {
-    int length = this->components.getSize();
+    int length = this->components->getSize();
     for (int i = 0; i < length; i++) {
-        Component comp = this->components.get(i);
-        comp.update(dt);
+        Component* comp = this->components->get(i);
+        (*comp).update(dt);
     }
 }
 
 void GameObject::start() {
-    int length = this->components.getSize();
+    int length = this->components->getSize();
     for (int i = 0; i < length; i++) {
-        Component comp = this->components.get(i);
-        comp.start();
+        Component* comp = this->components->get(i);
+        (*comp).start();
     }
 }
 
@@ -43,4 +48,34 @@ bool GameObject::operator ==(GameObject rightHand) {
 
 int GameObject::getUid() {
     return this->uid;
+}
+
+Component* GameObject::getComponent(std::string name) {
+    int len = this->components->getSize();
+    for (int i = 0; i < len; i++) {
+        if (this->components->get(i)->getName() == name.c_str()) {
+            return this->components->get(i);
+        }
+    }
+    return nullptr;
+}
+
+ArrayList<Component*>* GameObject::getAllComponents() {
+    return this->components;
+}
+
+Renderer* GameObject::getRenderer() {
+    return this->renderer;
+}
+
+Shader* GameObject::getShader() {
+    return this->shader;
+}
+
+void GameObject::generateRenderer() {
+
+}
+
+void GameObject::generateShader() {
+
 }
