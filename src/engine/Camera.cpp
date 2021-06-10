@@ -1,14 +1,19 @@
 #include "Camera.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+#include "MouseCallbacks.hpp"
+#include <GLFW/glfw3.h>
 
 
-Camera::Camera(GLFWwindow* window)
+Camera::Camera(GLFWwindow* window, float aspectRatio)
 {
+    this->aspectRatio = aspectRatio;
     this->cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
     this->cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
     this->cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
     this->window = window;
     this->shaders = new ArrayList<Shader*>();
+    flightControlsEnabled = false;
+    this->projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
 }
 
 Camera::~Camera()
@@ -56,21 +61,52 @@ void Camera::update(float dt) {
     int len = shaders->getSize();
     for (int i = 0; i < len; i++) {
         this->shaders->get(i)->setMat4("view", view);
+        this->shaders->get(i)->setMat4("projection", this->projection);
     }
 }
 
 void Camera::processKeyInput(float dt) {
-    float cameraSpeed = speed * dt;
-    if (glfwGetKey(this->window, GLFW_KEY_UP) == GLFW_PRESS) {
-            this->cameraPos += (cameraSpeed * this->cameraFront);
+    if (flightControlsEnabled) {
+        float cameraSpeed = speed * dt;
+        if (glfwGetKey(this->window, GLFW_KEY_UP) == GLFW_PRESS) {
+                this->cameraPos += (cameraSpeed * this->cameraFront);
+        }
+        if (glfwGetKey(this->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+                this->cameraPos -= (cameraSpeed * this->cameraFront);
+        }
+        if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+                this->cameraPos -= glm::normalize(glm::cross(this->cameraFront, this->cameraUp)) * cameraSpeed;
+        }
+        if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+                this->cameraPos += glm::normalize(glm::cross(this->cameraFront, this->cameraUp)) * cameraSpeed;
+        }
+        glm::vec3 direction;
+        direction.x = cos(glm::radians(yaw) * cos(glm::radians(pitch)));
+        direction.y = sin(glm::radians(pitch));
+        direction.z = sin(glm::radians(yaw) * cos(glm::radians(pitch)));
+        this->cameraFront = glm::normalize(direction);
+        this->projection = glm::perspective(glm::radians(zoom), aspectRatio, 0.1f, 100.0f);
     }
-    if (glfwGetKey(this->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-            this->cameraPos -= (cameraSpeed * this->cameraFront);
-    }
-    if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-            this->cameraPos -= glm::normalize(glm::cross(this->cameraFront, this->cameraUp)) * cameraSpeed;
-    }
-    if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-            this->cameraPos += glm::normalize(glm::cross(this->cameraFront, this->cameraUp)) * cameraSpeed;
-    }
+}
+
+void Camera::enableCameraFilightControls() {
+    glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(this->window, mouse_callback);
+    glfwSetScrollCallback(this->window, scroll_callback);
+    flightControlsEnabled = true;
+}
+
+void Camera::disableCameraControls() {
+    glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwSetCursorPosCallback(this->window, NULL);
+    glfwSetScrollCallback(this->window, NULL);
+    flightControlsEnabled = false;
+}
+
+void Camera::setAspectRatio(float aspectRatio) {
+    this->aspectRatio = aspectRatio;
+}
+
+bool Camera::controlsEnabled() {
+    return this->flightControlsEnabled;
 }

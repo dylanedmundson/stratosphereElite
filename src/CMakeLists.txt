@@ -32,6 +32,7 @@ set(
     engine/Shader.cpp
     engine/Camera.hpp
     engine/Camera.cpp
+    engine/MouseCallbacks.hpp
 )
 
 set(

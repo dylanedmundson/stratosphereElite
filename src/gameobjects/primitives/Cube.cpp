@@ -157,9 +157,7 @@ void Cube::setWindow(GLFWwindow* window) {
 }
 
 void Cube::processKeyInput(float dt) {
-    //TODO: try modeling normalized vector to a circle in its
-    // plane and map rotation this way processing rotations into 
-    // matricies and vector changes mathematically
+    //TODO: paly arround with controls more to get better input after palyer camera implemented
     float translationSpeed = this->speed * dt;
     float rotSpeedVal = this->rotSpeed * dt;
     this->trans = glm::mat4(1.0f);
@@ -213,31 +211,24 @@ void Cube::processKeyInput(float dt) {
         }
     }
     glm::vec4 v4Front = glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
-    glm::vec4 v4Up = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
     glm::mat4 trans1 = glm::mat4(1.0f);
-    trans1 = glm::rotate(trans1, glm::radians(this->pitch), glm::cross(this->objUp, this->objFront));
+    trans1 = glm::rotate(trans1, glm::radians(this->pitch), glm::vec3(1.0f, 0.0f, 0.0f));
     glm::mat4 trans2 = glm::mat4(1.0f);
-    trans2 = glm::rotate(trans2, glm::radians(this->yaw), this->objUp);
+    trans2 = glm::rotate(trans2, glm::radians(this->yaw), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 trans3 = glm::mat4(1.0f);
-    trans3 = glm::rotate(trans3, glm::radians(this->roll), this->objFront);
+    trans3 = glm::rotate(trans3, glm::radians(this->roll), glm::vec3(0.0f, 0.0f, 1.0f));
     v4Front = trans3 * trans2 * trans1 * v4Front;
-    v4Up = trans3 * trans2 * trans1 * v4Up;
     this->objFront.x = v4Front.x;
     this->objFront.y = v4Front.y;
     this->objFront.z = v4Front.z;
-    this->objUp.x = v4Up.x;
-    this->objUp.y = v4Up.y;
-    this->objUp.z = v4Up.z;
     this->objFront = glm::normalize(this->objFront);
-    this->objUp = glm::normalize(this->objUp);
     if (glfwGetKey(window, GLFW_KEY_W)) {
             this->position += (this->objFront * translationSpeed);
     }
     this->trans = glm::translate(trans, this->position);
-    this->trans = glm::rotate(trans, glm::radians(this->pitch), glm::cross(this->objUp, this->objFront));
-    this->trans = glm::rotate(trans, glm::radians(this->yaw), this->objUp);
-    this->trans = glm::rotate(trans, glm::radians(this->roll), this->objFront);
-    std::cout << glm::dot(this->objFront, this->objUp) <<std::endl;
+    this->trans = glm::rotate(trans, glm::radians(this->pitch), glm::vec3(1.0f, 0.0f, 0.0f));
+    this->trans = glm::rotate(trans, glm::radians(this->yaw),  glm::vec3(0.0f, 1.0f, 0.0f));
+    this->trans = glm::rotate(trans, glm::radians(this->roll),  glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
 void Cube::enableKeyInput() {

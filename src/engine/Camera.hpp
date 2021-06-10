@@ -8,14 +8,6 @@
 class Camera
 {
 private:
-    // const float speed = 2.5f;
-    // const float rotSpeed = 2.0f;
-    // float yaw;
-    // float pitch;
-    // bool firstMouse;
-    // float zoom;
-    // float lastx;
-    // float lasty;
     const float speed = 2.5f;
     const float rotSpeed = 2.5f;
     glm::vec3 cameraPos;
@@ -24,9 +16,12 @@ private:
     ArrayList<Shader*>* shaders;
     GLFWwindow* window;
     void processKeyInput(float dt);
+    bool flightControlsEnabled;
+    glm::mat4 projection;
+    float aspectRatio;
 
 public:
-    Camera(GLFWwindow* window);
+    Camera(GLFWwindow* window, float aspectRatio);
     glm::vec3 getCameraPos();
     glm::vec3 getCameraFront();
     glm::vec3 getCameraUp();
@@ -35,6 +30,10 @@ public:
     void setCamerFront(glm::vec3 vec);
     void addShader(Shader* shader);
     void update(float dt);
+    void enableCameraFilightControls();
+    void disableCameraControls();
+    void setAspectRatio(float apectRatio);
+    bool controlsEnabled();
     ~Camera();
 };
 
