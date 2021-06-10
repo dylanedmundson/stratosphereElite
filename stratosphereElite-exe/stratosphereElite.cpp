@@ -10,6 +10,7 @@
 #include "gameobjects/components/Renderer.hpp"
 #include "gameobjects/GameObject.hpp"
 #include "gameobjects/primitives/Cube.hpp"
+#include "engine/Camera.hpp"
 using namespace std;
 
 const unsigned int WIDTH = 800;
@@ -26,22 +27,17 @@ float pitch = 0.0f;
 bool firstMouse = true;
 float zoom = 45.0f;
 
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraup = glm::vec3(0.0f, 1.0f, 0.0f);
-
 void processKeyInput(GLFWwindow *window, glm::vec4* vec, float* xRot, float* yRot, float*zRot);
-void processCameraKeyInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 int main() {
-    
     Window window = Window(WIDTH, HEIGHT, TITLE);
     window.init();
 
-    GameObject* cube = new Cube(new Color(64, 0, 64), 200, 200, 200, WIDTH, HEIGHT);
+    GameObject* cube = new Cube(new Color(64, 0, 64), 800, 100, 400, WIDTH, HEIGHT, window.getWindow());
     cube->start();
+    ((Cube*)cube)->enableKeyInput();
     window.addGameObject(cube);
   
     //================keep for texture abstraction int go
@@ -75,127 +71,38 @@ int main() {
     glfwSetScrollCallback(window.getWindow(), scroll_callback);
 
     Shader* shader = cube->getShader();
-    Renderer* renderer = cube->getRenderer();
+    Camera* camera = new Camera(window.getWindow());
+    camera->addShader(shader);
+    // camera->addShader(cube2->getShader());
     while (!window.shouldClose()) 
     {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        processCameraKeyInput(window.getWindow());
         //last is we create the direction vector using the pitch and yaw values and update camera front;
         glm::vec3 direction;
         direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
         direction.y = sin(glm::radians(pitch));
         direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-        cameraFront = glm::normalize(direction);
-        projection = glm::perspective(glm::radians(zoom), (float)WIDTH / (float)HEIGHT, 1.0f, 100.0f);
-        view = glm::lookAt(
-            cameraPos, //defines camera position target
-            cameraPos + cameraFront, // defines the camera's direction, this will make it so it allways points at the target
-            cameraup //defined up vector
-        );
-        processKeyInput(window.getWindow(), &transVec, &anglex, &angley, &anglez);
+        camera->setCamerFront(glm::normalize(direction));
+        projection = glm::perspective(glm::radians(zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
         
-        glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::translate(trans, glm::vec3(transVec.x, transVec.y, transVec.z));
-        trans = glm::rotate(trans, anglex, glm::vec3(1.0f, 0.0f, 0.0f));
-        trans = glm::rotate(trans, angley, glm::vec3(0.0f, 1.0f, 0.0f));
-        trans = glm::rotate(trans, anglez, glm::vec3(0.0f, 0.0f, 1.0f));
-
-
         // send prjection view and model matrices to shader
         shader->setMat4("model", model);
-        shader->setMat4("view", view);
         shader->setMat4("projection", projection);
 
-        shader->setMat4("transform", trans);
-
+        camera->update(deltaTime);
         window.update(deltaTime);
     }
 
     shader->deleteProgram();
     delete cube;
     cube = nullptr;
-    delete renderer;
-    renderer = nullptr;
     delete shader;
     shader = nullptr;
+    delete camera;
+    camera = nullptr;
     return EXIT_SUCCESS;
-}
-
-void processCameraKeyInput(GLFWwindow* window) {
-    float cameraSpeed = speed * deltaTime;
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-        cameraPos += (cameraSpeed * cameraFront);
-    }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        cameraPos -= (cameraSpeed * cameraFront);
-    }
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraup)) * cameraSpeed;
-    }
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraup)) * cameraSpeed;
-    }
-}
-
-void processKeyInput(GLFWwindow *window, glm::vec4* vec, float* xRot, float* yRot, float* zRot)
-{
-    float translationSpeed = speed * deltaTime;
-    float rotSpeedVal = rotSpeed * deltaTime;
-    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
-        //return home
-        (*vec).x = 0;
-        (*vec).y = 0;
-        (*vec).z = 0;
-        *xRot = 0;
-        *yRot = 0;
-        *zRot = 0;
-    }
-    glm::vec4 transVec = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-        (*zRot) -= rotSpeedVal;
-    }
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-        (*zRot) += rotSpeedVal;
-    }
-    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-        (*xRot) += rotSpeedVal;
-    }
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-        (*xRot) -= rotSpeedVal;
-    }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        (*yRot) += rotSpeedVal;
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        (*yRot) -= rotSpeedVal;
-    }
-    glm::mat4 trans1 = glm::mat4(1.0f);
-    trans1 = glm::rotate(trans1, *xRot, glm::vec3(1.0f, 0.0f, 0.0f));
-    glm::mat4 trans2 = glm::mat4(1.0f);
-    trans2 = glm::rotate(trans2, *yRot, glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::mat4 trans3 = glm::mat4(1.0f);
-    trans3 = glm::rotate(trans3, *zRot, glm::vec3(0.0f, 0.0f, 1.0f));
-    transVec = trans3 * trans2 * trans1 * transVec;
-    if (glfwGetKey(window, GLFW_KEY_W) != GLFW_PRESS && glfwGetKey(window, GLFW_KEY_S) != GLFW_PRESS) {
-        transVec = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    } else {
-        if (glfwGetKey(window, GLFW_KEY_W))
-        {
-            transVec = transVec * -translationSpeed;
-        }
-        if (glfwGetKey(window, GLFW_KEY_S)) 
-        {
-            transVec = transVec = transVec * translationSpeed;
-        }
-    }
-    (*vec).x = (*vec).x + transVec.x;
-    (*vec).y = (*vec).y + transVec.y;
-    (*vec).z = (*vec).z + transVec.z;
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-    }
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {

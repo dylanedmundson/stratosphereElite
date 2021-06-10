@@ -32,6 +32,9 @@ Renderer::~Renderer() {
 }
 
 void Renderer::update(float dt) {
+    //TODO: change so we only update objects data and info to batch renderer
+    //so we only send data to GPU once per update (this will greatly improve performance)
+    //this way will cause GPU data to be sent each update iteration which will be combersome
     this->render();
 }
 
@@ -91,6 +94,7 @@ void Renderer::setVertices(float* vertices, int sizeofVertices) {
 }
 
 void Renderer::render() {
+    this->shader->use();
     int texLen = this->textures.getSize();
     for (int i = 0; i < texLen; i++) {
         glActiveTexture(GL_TEXTURE0 + i);

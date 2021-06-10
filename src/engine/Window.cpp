@@ -54,6 +54,7 @@ void Window::swapAndPoll() {
 }
 
 void Window::update(float dt) {
+    this->processWindowKeyInputs();
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     int goLength = gameObjects->getSize();
@@ -66,4 +67,17 @@ void Window::update(float dt) {
 
 void Window::addGameObject(GameObject* go) {
     gameObjects->add(go);
+}
+
+int Window::getWidth() {
+    return this->width;
+}
+int Window::getHeight() {
+    return this->height;
+}
+
+void Window::processWindowKeyInputs() {
+    if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(this->window, GLFW_TRUE);
+    }
 }

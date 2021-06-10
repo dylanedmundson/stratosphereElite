@@ -18,10 +18,16 @@ class GameObject
 protected:
     ArrayList<Component*>* components; //holds all components
     glm::vec3 position; //needed for objects position
+    glm::vec3 objFront;
+    glm::vec3 objUp;
+    glm::mat4 trans;
     Renderer* renderer; //needed for rendering
     Shader* shader; // needed for changes to matirces
     virtual void generateRenderer();
     virtual void generateShader();
+    float yaw;
+    float pitch;
+    float roll;
 private:
     int uid;
     static unsigned int ID_COUNTER;

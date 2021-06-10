@@ -2,6 +2,7 @@
 #define SHADER_H
 
 #include <glad/glad.h>
+#include <iostream>
 #include <string>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -20,6 +21,7 @@ private:
     unsigned int shaderProgramID;
     void resize();
     bool printShaderError(GLenum type, int shader);
+    std::string shaderName;
 public:
     Shader();
     ~Shader();
@@ -27,6 +29,8 @@ public:
     void compileAndLink();
     void use();
     void deleteProgram();
+    std::string getShaderName();
+    void setShaderName(std::string name);
     void setBool(const std::string &name, bool value);
     void setInt(const std::string &name, int value);
     void setFloat(const std::string &name, float value);

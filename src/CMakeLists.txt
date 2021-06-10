@@ -13,6 +13,8 @@ set(
     utils/List.hpp
     utils/Color.hpp
     utils/Color.cpp
+    utils/AssetPool.hpp
+    utils/AssetPool.cpp
 )
 
 set(

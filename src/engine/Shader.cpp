@@ -166,3 +166,11 @@ bool Shader::printShaderError(GLenum type, int shader) {
         return true;
     }
 }
+
+std::string Shader::getShaderName() {
+    return this->shaderName;
+}
+
+void Shader::setShaderName(std::string name) {
+    this->shaderName = name;
+}

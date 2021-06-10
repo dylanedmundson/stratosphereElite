@@ -6,6 +6,7 @@
 #include "WindowCallbacks.hpp"
 #include "utils/ArrayList.hpp"
 #include "gameobjects/GameObject.hpp"
+#include "engine/Camera.hpp"
 
 class Window
 {
@@ -15,6 +16,8 @@ private:
     int height;
     const char* title;
     ArrayList<GameObject*>* gameObjects;
+    void processCameraKeyInput();
+    void processWindowKeyInputs();
 public:
     Window(int width, int height, const char* title);
     GLFWwindow* getWindow();
@@ -23,6 +26,8 @@ public:
     void swapAndPoll();
     void update(float dt);
     void addGameObject(GameObject* go);
+    int getWidth();
+    int getHeight();
     ~Window();
 };
 #endif
