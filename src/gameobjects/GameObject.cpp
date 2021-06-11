@@ -91,3 +91,7 @@ glm::vec3 GameObject::getFront() {
 glm::vec3 GameObject::getUp() {
     return this->objUp;
 }
+
+glm::vec3 GameObject::getRight() {
+    return this->objRight;
+}
