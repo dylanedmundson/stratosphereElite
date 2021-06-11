@@ -20,6 +20,7 @@ protected:
     glm::vec3 position; //needed for objects position
     glm::vec3 objFront;
     glm::vec3 objUp;
+    glm::vec3 objRight;
     glm::mat4 trans;
     Renderer* renderer; //needed for rendering
     Shader* shader; // needed for changes to matirces
@@ -28,6 +29,9 @@ protected:
     float yaw;
     float pitch;
     float roll;
+    float prevYaw;
+    float prevPitch;
+    float prevRoll;
 private:
     int uid;
     static unsigned int ID_COUNTER;
