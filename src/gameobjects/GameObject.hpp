@@ -42,6 +42,9 @@ public:
     int getUid();
     Renderer* getRenderer();
     Shader* getShader();
+    glm::vec3 getPosition();
+    glm::vec3 getFront();
+    glm::vec3 getUp();
 
     virtual void update(float dt);
     virtual void start();

@@ -14,6 +14,7 @@ Camera::Camera(GLFWwindow* window, float aspectRatio)
     this->shaders = new ArrayList<Shader*>();
     flightControlsEnabled = false;
     this->projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+    this->go = nullptr;
 }
 
 Camera::~Camera()
@@ -53,6 +54,12 @@ void Camera::setCamerFront(glm::vec3 vec) {
 
 void Camera::update(float dt) {
     this->processKeyInput(dt);
+    if (this->go != nullptr) {
+        this->cameraFront = go->getFront();
+        this->cameraPos = go->getPosition() + (this->cameraFront * -3.0f);
+        this->cameraUp = go->getUp();
+        //FIXME: either up bector in go is not updating or its not updating here
+    }
     glm::mat4 view = glm::lookAt(
         this->cameraPos,
         this->cameraPos + this->cameraFront,
@@ -90,6 +97,11 @@ void Camera::processKeyInput(float dt) {
 }
 
 void Camera::enableCameraFilightControls() {
+    lastX = 400, lastY = 300;
+    yaw = -90.0f;
+    pitch = 0.0f;
+    firstMouse = true;
+    zoom = 45.0f;
     glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(this->window, mouse_callback);
     glfwSetScrollCallback(this->window, scroll_callback);
@@ -101,6 +113,7 @@ void Camera::disableCameraControls() {
     glfwSetCursorPosCallback(this->window, NULL);
     glfwSetScrollCallback(this->window, NULL);
     flightControlsEnabled = false;
+    std::cout << "controls disabled" << std::endl;
 }
 
 void Camera::setAspectRatio(float aspectRatio) {
@@ -109,4 +122,12 @@ void Camera::setAspectRatio(float aspectRatio) {
 
 bool Camera::controlsEnabled() {
     return this->flightControlsEnabled;
+}
+
+void Camera::attachToGameObject(GameObject* go) {
+    this->go = go;
+}
+
+void Camera::detachFromGameObject() {
+    this->go = nullptr;
 }

@@ -4,6 +4,7 @@
 #include "Shader.hpp"
 #include <GLFW/glfw3.h>
 #include "utils/ArrayList.hpp"
+#include "gameobjects/GameObject.hpp"
 
 class Camera
 {
@@ -19,6 +20,7 @@ private:
     bool flightControlsEnabled;
     glm::mat4 projection;
     float aspectRatio;
+    GameObject* go;
 
 public:
     Camera(GLFWwindow* window, float aspectRatio);
@@ -34,6 +36,8 @@ public:
     void disableCameraControls();
     void setAspectRatio(float apectRatio);
     bool controlsEnabled();
+    void attachToGameObject(GameObject* go);
+    void detachFromGameObject();
     ~Camera();
 };
 

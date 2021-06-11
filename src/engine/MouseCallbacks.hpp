@@ -2,13 +2,28 @@
 #define MOUSECALLBACKS
 
 #include <GLFW/glfw3.h>
-static float lastX = 400, lastY = 300; //initail mouse position, initiallized to center screen
-static float yaw = -90.0f; // to make sure point in - z dir yaw gets 90 degree rotation
+static float lastX = 400, lastY = 300;
+static float yaw = -90.0f;
 static float pitch = 0.0f;
 static bool firstMouse = true;
 static float zoom = 45.0f;
 
 static void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    int width;
+    int height;
+    glfwGetWindowSize(window, &width, &height);
+    if (xpos > width) {
+        xpos = (float)width;
+    }
+    if (xpos < 0) {
+        xpos = 0.0f;
+    }
+    if (ypos > height) {
+        ypos = (float)height;
+    }
+    if (ypos < 0) {
+        ypos = 0.0f;
+    }
     if (firstMouse) {
         lastX = xpos;
         lastY = ypos;

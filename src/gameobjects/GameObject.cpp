@@ -79,3 +79,15 @@ void GameObject::generateRenderer() {
 void GameObject::generateShader() {
 
 }
+
+glm::vec3 GameObject::getPosition() {
+    return this->position;
+}
+
+glm::vec3 GameObject::getFront() {
+    return this->objFront;
+}
+
+glm::vec3 GameObject::getUp() {
+    return this->objUp;
+}

@@ -36,16 +36,13 @@ int main() {
     Shader* shader = cube->getShader();
     Camera* camera = new Camera(window.getWindow(), (float)WIDTH / (float)HEIGHT);
     camera->addShader(shader);
-    camera->enableCameraFilightControls();
+    camera->attachToGameObject(cube);
+    // camera->enableCameraFilightControls();
     while (!window.shouldClose()) 
     {
 
         if (glfwGetKey(window.getWindow(), GLFW_KEY_C)) {
-            if (camera->controlsEnabled()) {
-                camera->disableCameraControls();
-            } else {
-                camera->enableCameraFilightControls();
-            }
+            camera->detachFromGameObject();
         }
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -56,11 +53,5 @@ int main() {
     }
 
     shader->deleteProgram();
-    delete cube;
-    cube = nullptr;
-    delete shader;
-    shader = nullptr;
-    delete camera;
-    camera = nullptr;
     return EXIT_SUCCESS;
 }
