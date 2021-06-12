@@ -19,6 +19,8 @@ const char* TITLE = "LearnOpenGL";
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+//TODO: impelement a way for cubes to have a texture
+
 int main() {
     Window window = Window(WIDTH, HEIGHT, TITLE);
     window.init();
