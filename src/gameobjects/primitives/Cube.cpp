@@ -5,7 +5,8 @@
 #include "gameobjects/components/Renderer.hpp"
 #include "glad/glad.h"
 #include "utils/AssetPool.hpp"
-//TODO: some weird stuff happens when adjusting yaw, pitch, and roll all at once, figure out what might be happening and handle this
+//TODO: some weird stuff happens when adjusting yaw, pitch, and roll all at once changes shape and size of cube, not sure whats happening
+
 float timeElapsed = 0.0f;
 Cube::Cube() {
 }
@@ -236,15 +237,6 @@ void Cube::updateVectors() {
         this->rollIsDirty = false;
     }
 
-    if (this->yawIsDirty) {
-        v4 = glm::vec4(this->objFront, 1.0f);
-        glm::mat4 yawRot = glm::rotate(glm::mat4(1.0f), glm::radians(this->yaw - this->prevYaw), this->objUp);
-        v4 = yawRot * v4;
-        this->objFront.x = v4.x, this->objFront.y = v4.y, this->objFront.z = v4.z;
-        this->objRight = glm::cross(this->objFront, this->objUp);
-        this->yawIsDirty = false;
-    }
-
     if (this->pitchIsDirty) {
         v4 = glm::vec4(this->objFront, 1.0f);
         glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), glm::radians(this->pitch - this->prevPitch), this->objRight);
@@ -253,11 +245,20 @@ void Cube::updateVectors() {
         this->objUp = glm::cross(this->objRight, this->objFront);
         this->pitchIsDirty = false;
     }
+
+     if (this->yawIsDirty) {
+        v4 = glm::vec4(this->objFront, 1.0f);
+        glm::mat4 yawRot = glm::rotate(glm::mat4(1.0f), glm::radians(this->yaw - this->prevYaw), this->objUp);
+        v4 = yawRot * v4;
+        this->objFront.x = v4.x, this->objFront.y = v4.y, this->objFront.z = v4.z;
+        this->objRight = glm::cross(this->objFront, this->objUp);
+        this->yawIsDirty = false;
+    }
     //ensure still normalized
     glm::normalize(this->objFront);
     glm::normalize(this->objUp);
     glm::normalize(this->objRight);
-
+    
     //after all vectors have been rotated and the position has been updated we can now use these vectors to define the model matrix
     this->model = glm::mat4(
         glm::vec4(this->objRight, 0.0f), //new x axis (right)
