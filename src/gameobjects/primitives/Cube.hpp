@@ -19,6 +19,7 @@ protected:
     bool keyInputEnabled;
     GLFWwindow* window;
     Color* c;
+    glm::mat4 translate;
     virtual void generateRenderer();
     virtual void generateShader();
     void processKeyInput(float dt);

@@ -21,7 +21,7 @@ protected:
     glm::vec3 objFront;
     glm::vec3 objUp;
     glm::vec3 objRight;
-    glm::mat4 trans;
+    glm::mat4 model;
     Renderer* renderer; //needed for rendering
     Shader* shader; // needed for changes to matirces
     virtual void generateRenderer();

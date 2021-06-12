@@ -12,18 +12,6 @@ static void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     int width;
     int height;
     glfwGetWindowSize(window, &width, &height);
-    if (xpos > width) {
-        xpos = (float)width;
-    }
-    if (xpos < 0) {
-        xpos = 0.0f;
-    }
-    if (ypos > height) {
-        ypos = (float)height;
-    }
-    if (ypos < 0) {
-        ypos = 0.0f;
-    }
     if (firstMouse) {
         lastX = xpos;
         lastY = ypos;

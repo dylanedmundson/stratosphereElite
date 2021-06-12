@@ -27,7 +27,7 @@ Cube::Cube(Color* color, int width, int height, int depth, int winWidth, int win
     this->objRight = glm::vec3(1.0f, 0.0f, 0.0f);
     this->window = window;
     this->keyInputEnabled = false;
-    this->trans = glm::mat4(1.0f);
+    this->model = glm::mat4(1.0f);
     this->yaw = 0.0f;
     this->pitch = 0.0f;
     this->roll = 0.0f;
@@ -64,14 +64,9 @@ void Cube::update(float dt) {
     this->shader->use();
     if (this->keyInputEnabled) {
         processKeyInput(dt);
-        this->shader->setMat4("transform", trans);
+        this->shader->setMat4("model", this->model);
     }
     GameObject::update(dt);
-    if ((timeElapsed += dt) > 1.0f) {
-        std::cout << "x: " << this->objFront.x << ", y: " << this->objFront.y << ", z: " << this->objFront.z << std::endl;
-        std::cout << "yaw: " << this->yaw << ", pitch: " << this->pitch << ", roll: " << this->roll << std::endl;
-        timeElapsed = 0.0f;
-    }
 }
 
 void Cube::start() {
@@ -79,7 +74,6 @@ void Cube::start() {
     GameObject::start();
 }
 
-//TODO: overide methods
 void Cube::generateRenderer() {
     float wHalf = (float)this->width / (float)this->windowWidth / 2.0f;
     float hHalf = (float)this->height / (float)this->windowWidth / 2.0f;
@@ -158,13 +152,8 @@ void Cube::setWindow(GLFWwindow* window) {
 }
 
 void Cube::processKeyInput(float dt) {
-    //TODO: paly arround with controls more to get better input after palyer camera implemented
     float translationSpeed = this->speed * dt;
     float rotSpeedVal = this->rotSpeed * dt;
-    // this->trans = glm::mat4(1.0f);
-    float yawUpdate = 0.0f;
-    float pitchUpdate = 0.0f;
-    float rollUpdate = 0.0f;
     bool yawIsDirty = false;
     bool pitchIsDirty = false;
     bool rollIsDirty = false;
@@ -173,16 +162,18 @@ void Cube::processKeyInput(float dt) {
         this->position = glm::vec3(0.0f, 0.0f, 0.0f);
         this->objFront = glm::vec3(0.0f, 0.0f, -1.0f);
         this->objUp = glm::vec3(0.0f, 1.0f, 0.0f);
+        this->objRight = glm::vec3(1.0f, 0.0f, 0.0f);
+        this->model = glm::mat4(1.0f);
         this->yaw = 0.0f;
         this->pitch = 0.0f;
         this->roll = 0.0f;
     }
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-        this->roll -= rotSpeedVal;
+        this->roll += rotSpeedVal;
         rollIsDirty = true;
     }
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-        this->roll += rotSpeedVal;
+        this->roll -= rotSpeedVal;
         rollIsDirty = true;
     }
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
@@ -225,40 +216,35 @@ void Cube::processKeyInput(float dt) {
         }
         yawIsDirty = true;
     }
-    //update yaw
+
+    //update up, front, and right vectors
     glm::vec4 v4;
-    glm::mat4 rotation = glm::mat4(1.0f);
-    glm::mat4 rotation2 = glm::mat4(1.0f);
-    glm::mat4 rotation3 = glm::mat4(1.0f);
-    if (yawIsDirty) {
-        v4 = glm::vec4(this->objFront.x, this->objFront.y, this->objFront.z, 1.0f);
-        rotation = glm::rotate(rotation, glm::radians(this->yaw - this->prevYaw), this->objUp);
-        this->trans = this->trans * rotation;
-        v4 = rotation * v4;
-        this->objFront.x = v4.x;
-        this->objFront.y = v4.y;
-        this->objFront.z = v4.z;
+    if (rollIsDirty) {
+        v4 = glm::vec4(this->objUp.x, this->objUp.y, this->objUp.z, 1.0f);
+        glm::mat4 rollRot = glm::rotate(glm::mat4(1.0f), glm::radians(this->roll - this->prevRoll), this->objFront);
+        v4 = rollRot * v4;
+        this->objUp.x = v4.x, this->objUp.y = v4.y, this->objUp.z = v4.z;
         this->objRight = glm::cross(this->objFront, this->objUp);
     }
 
-    //update pitch
+    if (yawIsDirty) {
+        v4 = glm::vec4(this->objFront, 1.0f);
+        glm::mat4 yawRot = glm::rotate(glm::mat4(1.0f), glm::radians(this->yaw - this->prevYaw), this->objUp);
+        v4 = yawRot * v4;
+        this->objFront.x = v4.x, this->objFront.y = v4.y, this->objFront.z = v4.z;
+        this->objRight = glm::cross(this->objFront, this->objUp);
+    }
+
     if (pitchIsDirty) {
-        v4 = glm::vec4(this->objFront.x, this->objFront.y, this->objFront.z, 1.0f);
-        rotation2 = glm::rotate(rotation2, glm::radians(this->pitch - this->prevPitch), this->objRight);
-        this->trans = this->trans * rotation2;
-        v4 = rotation2 * v4;
+        v4 = glm::vec4(this->objFront, 1.0f);
+        glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), glm::radians(this->pitch - this->prevPitch), this->objRight);
+        v4 = pitchRot * v4;
         this->objFront.x = v4.x, this->objFront.y = v4.y, this->objFront.z = v4.z;
         this->objUp = glm::cross(this->objRight, this->objFront);
     }
 
-    //update roll
-    if (rollIsDirty) {
-        v4 = glm::vec4(this->objUp.x, this->objUp.y, this->objUp.z, 1.0f);
-        rotation3 = glm::rotate(rotation3, glm::radians(this->roll - this->prevRoll), this->objFront);
-        this->trans = this->trans * rotation3;
-        v4 = rotation3 * v4;
-        this->objUp.x = v4.x, this->objUp.y = v4.y, this->objUp.z = v4.z;
-        this->objRight = glm::cross(this->objFront, this->objUp);
+    if (glfwGetKey(window, GLFW_KEY_W)) {
+        this->position += (this->objFront * translationSpeed);
     }
 
     //ensure still normalized
@@ -266,28 +252,14 @@ void Cube::processKeyInput(float dt) {
     glm::normalize(this->objUp);
     glm::normalize(this->objRight);
 
-     if (glfwGetKey(window, GLFW_KEY_W)) {
-        this->position += (this->objFront * translationSpeed);
-        this->trans = glm::translate(trans, this->objFront * translationSpeed);
-    }
-    //update image
-    // trans = trans * rotation3 * rotation2 * rotation1;
-    // this->trans = glm::rotate(trans, glm::radians(this->yaw - this->prevYaw), this->objUp);;
-    // this->trans = glm::rotate(trans, glm::radians(this->yaw),  glm::vec3(0.0f, 1.0f, 0.0f));
-    // this->trans = glm::rotate(trans, glm::radians(this->roll),  glm::vec3(0.0f, 0.0f, 1.0f));
-
-    // glm::vec4 v4Front = glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
-    // glm::mat4 trans1 = glm::mat4(1.0f);
-    // trans1 = glm::rotate(trans1, glm::radians(this->pitch), glm::vec3(1.0f, 0.0f, 0.0f));
-    // glm::mat4 trans2 = glm::mat4(1.0f);
-    // trans2 = glm::rotate(trans2, glm::radians(this->yaw), glm::vec3(0.0f, 1.0f, 0.0f));
-    // glm::mat4 trans3 = glm::mat4(1.0f);
-    // trans3 = glm::rotate(trans3, glm::radians(this->roll), glm::vec3(0.0f, 0.0f, 1.0f));
-    // v4Front = trans3 * trans2 * trans1 * v4Front;
-    // this->objFront.x = v4Front.x;
-    // this->objFront.y = v4Front.y;
-    // this->objFront.z = v4Front.z;
-    // this->objFront = glm::normalize(this->objFront);
+    //after all vectors have been rotated and the position has been updated we can now use these vectors to define the model matrix
+    this->model = glm::mat4(
+        glm::vec4(this->objRight, 0.0f), //new x axis (right)
+        glm::vec4(this->objUp, 0.0f), //new y axis (up)
+        glm::vec4(this->objFront, 0.0f), //new z axis (front)
+        glm::vec4(this->position, 1.0f) // new origin (center of cube) 
+    );
+    //if for some reason we want to chang point of rotation from center we can translate the model matrix
     this->prevYaw = this->yaw;
     this->prevPitch = this->pitch;
     this->prevRoll = this->roll;
