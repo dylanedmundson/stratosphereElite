@@ -24,12 +24,21 @@ int main() {
     window.init();
 
     GameObject* cube = new Cube(new Color(64, 0, 64), 800, 100, 400, WIDTH, HEIGHT, window.getWindow());
-    GameObject* cube2 = new Cube(new Color(0, 64, 64), 800, 100, 400, WIDTH, HEIGHT, window.getWindow());
-    cube2->start();
+    for (int i = 0; i < 100; i++) {
+        GameObject* cube2 = new Cube(new Color(0, 64, 64), abs(rand() % 799) + 1, abs(rand() % 799) + 1, abs(rand() % 799) + 1, WIDTH, HEIGHT, window.getWindow());
+        ((Cube*)cube2)->setPos(glm::vec3((float)(rand() % 20), (float)(rand() % 20), -(float)(rand() % 100)));
+        ((Cube*)cube2)->rollRot((float)(rand() % 360));
+        ((Cube*)cube2)->pitchRot((float)(rand() % 360));
+        ((Cube*)cube2)->yawRot((float)(rand() % 360));
+        cube2->start();
+        window.addGameObject(cube2);
+    }
+    GameObject* skyBox = new Cube(new Color(20, 20, 130), 100 * WIDTH, 100 * WIDTH, 100 * WIDTH, WIDTH, HEIGHT, window.getWindow());
+    skyBox->start();
     cube->start();
     ((Cube*)cube)->enableKeyInput();
     window.addGameObject(cube);
-    window.addGameObject(cube2);
+    window.addGameObject(skyBox);
 
 
 
@@ -39,8 +48,10 @@ int main() {
     Shader* shader = cube->getShader();
     Camera* camera = new Camera(window.getWindow(), (float)WIDTH / (float)HEIGHT);
     camera->addShader(shader);
-    // camera->attachToGameObject(cube);
+    camera->attachToGameObject(cube);
     camera->enableCameraFilightControls();
+
+    double updateTimeCount = 0.0;
     while (!window.shouldClose()) 
     {
         // if (glfwGetKey(window.getWindow(), GLFW_KEY_C)) {
@@ -49,20 +60,9 @@ int main() {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
-        if (glfwGetKey(window.getWindow(), GLFW_KEY_U) == GLFW_PRESS) {
-            ((Cube*)cube2)->rollRot(120.0f * deltaTime);
-        }
-        if (glfwGetKey(window.getWindow(), GLFW_KEY_I) == GLFW_PRESS) {
-            ((Cube*)cube2)->yawRot(120.0f * deltaTime);
-        }
-        if (glfwGetKey(window.getWindow(), GLFW_KEY_O) == GLFW_PRESS) {
-            ((Cube*)cube2)->pitchRot(120.0f * deltaTime);
-        }
-
         camera->update(deltaTime);
         window.update(deltaTime);
-    }
+}
 
     shader->deleteProgram();
     return EXIT_SUCCESS;

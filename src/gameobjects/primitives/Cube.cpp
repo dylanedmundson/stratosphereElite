@@ -5,7 +5,8 @@
 #include "gameobjects/components/Renderer.hpp"
 #include "glad/glad.h"
 #include "utils/AssetPool.hpp"
-//TODO: some weird stuff happens when adjusting yaw, pitch, and roll all at once changes shape and size of cube, not sure whats happening
+//TODO: some weird stuff happens when adjusting yaw, pitch, and roll seems to have something to do with scalling being applied
+//with model matrix
 
 float timeElapsed = 0.0f;
 Cube::Cube() {
@@ -36,7 +37,6 @@ Cube::Cube(Color* color, int width, int height, int depth, int winWidth, int win
     this->prevYaw = 0.0f;
     this->prevPitch = 0.0f;
     this->prevRoll = 0.0f;
-
 }
 
 Cube::~Cube()
@@ -258,7 +258,7 @@ void Cube::updateVectors() {
     glm::normalize(this->objFront);
     glm::normalize(this->objUp);
     glm::normalize(this->objRight);
-    
+
     //after all vectors have been rotated and the position has been updated we can now use these vectors to define the model matrix
     this->model = glm::mat4(
         glm::vec4(this->objRight, 0.0f), //new x axis (right)
@@ -266,6 +266,11 @@ void Cube::updateVectors() {
         glm::vec4(this->objFront, 0.0f), //new z axis (front)
         glm::vec4(this->position, 1.0f) // new origin (center of cube) 
     );
+
+    // std::cout << this->objRight.x << ", " << this->objUp.x << ", " << this->objFront.x << ", " << this->position.x << std::endl;
+    // std::cout << this->objRight.y << ", " << this->objUp.y << ", " << this->objFront.y << ", " << this->position.y << std::endl;
+    // std::cout << this->objRight.z << ", " << this->objUp.z << ", " << this->objFront.z << ", " << this->position.z << std::endl;
+    // std::cout << "0"              << ", " << "0"           << ", " << "0"              << ", " <<  "1"             <<std::endl;
     //if for some reason we want to chang point of rotation from center we can translate the model matrix
     this->prevYaw = this->yaw;
     this->prevPitch = this->pitch;

@@ -27,6 +27,7 @@ protected:
     virtual void generateShader();
     void processKeyInput(float dt);
     void updateVectors();
+    double lastUpdateTime;
 public:
     Cube();
     Cube(Color* color, int width, int height, int depth, int windowWidth, int windowHeight, GLFWwindow* window);
