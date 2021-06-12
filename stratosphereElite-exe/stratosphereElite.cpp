@@ -24,9 +24,12 @@ int main() {
     window.init();
 
     GameObject* cube = new Cube(new Color(64, 0, 64), 800, 100, 400, WIDTH, HEIGHT, window.getWindow());
+    GameObject* cube2 = new Cube(new Color(0, 64, 64), 800, 100, 400, WIDTH, HEIGHT, window.getWindow());
+    cube2->start();
     cube->start();
     ((Cube*)cube)->enableKeyInput();
     window.addGameObject(cube);
+    window.addGameObject(cube2);
 
 
 
@@ -46,6 +49,16 @@ int main() {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+
+        if (glfwGetKey(window.getWindow(), GLFW_KEY_U) == GLFW_PRESS) {
+            ((Cube*)cube2)->rollRot(120.0f * deltaTime);
+        }
+        if (glfwGetKey(window.getWindow(), GLFW_KEY_I) == GLFW_PRESS) {
+            ((Cube*)cube2)->yawRot(120.0f * deltaTime);
+        }
+        if (glfwGetKey(window.getWindow(), GLFW_KEY_O) == GLFW_PRESS) {
+            ((Cube*)cube2)->pitchRot(120.0f * deltaTime);
+        }
 
         camera->update(deltaTime);
         window.update(deltaTime);

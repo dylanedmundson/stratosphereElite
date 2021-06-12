@@ -5,6 +5,7 @@
 #include "gameobjects/components/Renderer.hpp"
 #include "glad/glad.h"
 #include "utils/AssetPool.hpp"
+//TODO: some weird stuff happens when adjusting yaw, pitch, and roll all at once, figure out what might be happening and handle this
 float timeElapsed = 0.0f;
 Cube::Cube() {
 }
@@ -64,8 +65,9 @@ void Cube::update(float dt) {
     this->shader->use();
     if (this->keyInputEnabled) {
         processKeyInput(dt);
-        this->shader->setMat4("model", this->model);
     }
+    this->updateVectors();
+    this->shader->setMat4("model", this->model);
     GameObject::update(dt);
 }
 
@@ -145,6 +147,7 @@ void Cube::generateShader() {
 
 void Cube::setPos(glm::vec3 pos) {
     this->position = pos;
+    this->model = glm::translate(this->model, pos);
 }
 
 void Cube::setWindow(GLFWwindow* window) {
@@ -154,9 +157,6 @@ void Cube::setWindow(GLFWwindow* window) {
 void Cube::processKeyInput(float dt) {
     float translationSpeed = this->speed * dt;
     float rotSpeedVal = this->rotSpeed * dt;
-    bool yawIsDirty = false;
-    bool pitchIsDirty = false;
-    bool rollIsDirty = false;
     if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
         //return home
         this->position = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -170,19 +170,19 @@ void Cube::processKeyInput(float dt) {
     }
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
         this->roll += rotSpeedVal;
-        rollIsDirty = true;
+        this->rollIsDirty = true;
     }
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
         this->roll -= rotSpeedVal;
-        rollIsDirty = true;
+        this->rollIsDirty = true;
     }
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
         this->pitch += rotSpeedVal;
-        pitchIsDirty = true;
+        this->pitchIsDirty = true;
     }
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
         this->pitch -= rotSpeedVal;
-         pitchIsDirty = true;
+        this->pitchIsDirty = true;
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         if (this->yaw + rotSpeedVal > 20.0f) {
@@ -190,7 +190,7 @@ void Cube::processKeyInput(float dt) {
         } else {
             this->yaw += rotSpeedVal;
         }
-        yawIsDirty = true;
+        this->yawIsDirty = true;
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         if (this->yaw - rotSpeedVal < -20.0f) {
@@ -198,7 +198,7 @@ void Cube::processKeyInput(float dt) {
         } else {
             this->yaw -= rotSpeedVal;
         }
-        yawIsDirty = true;
+        this->yawIsDirty = true;
     }
     if (glfwGetKey(window, GLFW_KEY_A) != GLFW_PRESS && this->yaw > 0.0f) {
         if (this->yaw - (rotSpeedVal / 4.0f) < 0.0f) {
@@ -206,7 +206,7 @@ void Cube::processKeyInput(float dt) {
         } else {
             this->yaw -= rotSpeedVal / 4.0f;
         }
-        yawIsDirty = true;
+        this->yawIsDirty = true;
     }
     if (glfwGetKey(window, GLFW_KEY_D) != GLFW_PRESS && this->yaw < 0.0f) {
         if (this->yaw + rotSpeedVal / 4.0f > 0.0f) {
@@ -214,39 +214,45 @@ void Cube::processKeyInput(float dt) {
         } else {
             this->yaw += rotSpeedVal / 4.0f;
         }
-        yawIsDirty = true;
+        this->yawIsDirty = true;
     }
+    if (glfwGetKey(window, GLFW_KEY_W)) {
+        this->position += (this->objFront * translationSpeed);
+    }
+}
 
+void Cube::enableKeyInput() {
+    this->keyInputEnabled = true;
+}
+void Cube::updateVectors() {
     //update up, front, and right vectors
     glm::vec4 v4;
-    if (rollIsDirty) {
+    if (this->rollIsDirty) {
         v4 = glm::vec4(this->objUp.x, this->objUp.y, this->objUp.z, 1.0f);
         glm::mat4 rollRot = glm::rotate(glm::mat4(1.0f), glm::radians(this->roll - this->prevRoll), this->objFront);
         v4 = rollRot * v4;
         this->objUp.x = v4.x, this->objUp.y = v4.y, this->objUp.z = v4.z;
         this->objRight = glm::cross(this->objFront, this->objUp);
+        this->rollIsDirty = false;
     }
 
-    if (yawIsDirty) {
+    if (this->yawIsDirty) {
         v4 = glm::vec4(this->objFront, 1.0f);
         glm::mat4 yawRot = glm::rotate(glm::mat4(1.0f), glm::radians(this->yaw - this->prevYaw), this->objUp);
         v4 = yawRot * v4;
         this->objFront.x = v4.x, this->objFront.y = v4.y, this->objFront.z = v4.z;
         this->objRight = glm::cross(this->objFront, this->objUp);
+        this->yawIsDirty = false;
     }
 
-    if (pitchIsDirty) {
+    if (this->pitchIsDirty) {
         v4 = glm::vec4(this->objFront, 1.0f);
         glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), glm::radians(this->pitch - this->prevPitch), this->objRight);
         v4 = pitchRot * v4;
         this->objFront.x = v4.x, this->objFront.y = v4.y, this->objFront.z = v4.z;
         this->objUp = glm::cross(this->objRight, this->objFront);
+        this->pitchIsDirty = false;
     }
-
-    if (glfwGetKey(window, GLFW_KEY_W)) {
-        this->position += (this->objFront * translationSpeed);
-    }
-
     //ensure still normalized
     glm::normalize(this->objFront);
     glm::normalize(this->objUp);
@@ -265,6 +271,15 @@ void Cube::processKeyInput(float dt) {
     this->prevRoll = this->roll;
 }
 
-void Cube::enableKeyInput() {
-    this->keyInputEnabled = true;
+void Cube::rollRot(float roll) {
+    this->roll += roll;
+    this->rollIsDirty = true;
+}
+void Cube::yawRot(float yaw) {
+    this->yaw += yaw;
+    this->yawIsDirty = true;
+}
+void Cube::pitchRot(float pitch) {
+    this->pitch += pitch;
+    this->pitchIsDirty = true;
 }

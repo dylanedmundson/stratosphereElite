@@ -17,12 +17,16 @@ protected:
     int windowWidth;
     int windowHeight;
     bool keyInputEnabled;
+    bool yawIsDirty = false;
+    bool pitchIsDirty = false;
+    bool rollIsDirty = false;
     GLFWwindow* window;
     Color* c;
     glm::mat4 translate;
     virtual void generateRenderer();
     virtual void generateShader();
     void processKeyInput(float dt);
+    void updateVectors();
 public:
     Cube();
     Cube(Color* color, int width, int height, int depth, int windowWidth, int windowHeight, GLFWwindow* window);
@@ -32,6 +36,10 @@ public:
     void setWindowWidth(int winWidth);
     void setWindowHeight(int winHeight);
     void setPos(glm::vec3 pos);
+    void rollRot(float roll);
+    void yawRot(float yawRot);
+    void pitchRot(float pitchRot);
+    void transform(glm::vec3 translate, float roll, float yaw, float pitch);
     void enableKeyInput();
     virtual void update(float dt);
     virtual void start();
