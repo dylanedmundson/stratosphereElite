@@ -4,6 +4,8 @@
 #include "glm/glm.hpp"
 #include "gameobjects/GameObject.hpp"
 #include "engine/Shader.hpp"
+#include "gameobjects/components/Texture.hpp"
+#include "utils/ArrayList.hpp"
 #include <GLFW/glfw3.h>
 
 class Cube : public GameObject
@@ -20,6 +22,7 @@ protected:
     bool yawIsDirty = false;
     bool pitchIsDirty = false;
     bool rollIsDirty = false;
+    // ArrayList<Texture*> textures;
     GLFWwindow* window;
     Color* c;
     glm::mat4 translate;
@@ -27,7 +30,6 @@ protected:
     virtual void generateShader();
     void processKeyInput(float dt);
     void updateVectors();
-    double lastUpdateTime;
 public:
     Cube();
     Cube(Color* color, int width, int height, int depth, int windowWidth, int windowHeight, GLFWwindow* window);
@@ -45,6 +47,7 @@ public:
     virtual void update(float dt);
     virtual void start();
     void setWindow(GLFWwindow* window);
+    void addTexture(Texture* tex);
     ~Cube();
 };
 

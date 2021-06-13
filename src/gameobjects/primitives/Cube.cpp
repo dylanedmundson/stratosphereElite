@@ -289,3 +289,11 @@ void Cube::pitchRot(float pitch) {
     this->pitch += pitch;
     this->pitchIsDirty = true;
 }
+
+void Cube::addTexture(Texture* tex) {
+    // textures.add(tex);
+    // this->addComponent(tex);
+    // if (textures.getSize() == 1) {
+    //     this->generateRenderer();
+    // }
+}
