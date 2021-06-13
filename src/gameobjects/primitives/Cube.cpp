@@ -190,6 +190,9 @@ void Cube::generateRenderer() {
     }
     generateShader();
     this->renderer = new Renderer(this->shader);
+    if (this->textures->getSize() >= 1) {
+        this->renderer->enableTexture();
+    }
     this->renderer->setVertices(vertices, 216);
     this->renderer->setUsage(GL_STATIC_DRAW);
     this->renderer->enableColor();

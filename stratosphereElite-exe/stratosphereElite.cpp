@@ -52,6 +52,10 @@ int main() {
     camera->addShader(shader);
     camera->attachToGameObject(cube);
     camera->enableCameraFilightControls();
+    Texture* skyBoxTex = new Texture();
+    skyBoxTex->init("assets/wall.jpg", TEX_LINEAR, RGB);
+    ((Cube*)skyBox)->addTexture(skyBoxTex);
+    ((Cube*)cube)->addTexture(skyBoxTex);//TODO: problem is texture doesn't map to dimentions
 
     double updateTimeCount = 0.0;
     while (!window.shouldClose()) 

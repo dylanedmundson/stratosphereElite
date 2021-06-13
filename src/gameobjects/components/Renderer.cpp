@@ -96,6 +96,7 @@ void Renderer::setVertices(float* vertices, int sizeofVertices) {
 void Renderer::render() {
     this->shader->use();
     int texLen = this->textures.getSize();
+    this->shader->setBool("hasTex", this->hasTex);
     for (int i = 0; i < texLen; i++) {
         glActiveTexture(GL_TEXTURE0 + i);
         this->textures.get(i)->bind();
