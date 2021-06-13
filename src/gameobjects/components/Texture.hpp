@@ -7,7 +7,6 @@
 enum TEX_TYPE {TEX_PIXEL, TEX_LINEAR};
 enum IMG_FORMAT {RGB, RGBA};
 
-//TODO: make texture extend compoenent
 class Texture : public Component
 {
 private:

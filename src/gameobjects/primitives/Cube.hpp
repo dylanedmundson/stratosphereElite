@@ -22,7 +22,7 @@ protected:
     bool yawIsDirty = false;
     bool pitchIsDirty = false;
     bool rollIsDirty = false;
-    // ArrayList<Texture*> textures;
+    ArrayList<Texture*>* textures;
     GLFWwindow* window;
     Color* c;
     glm::mat4 translate;
