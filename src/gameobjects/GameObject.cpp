@@ -35,6 +35,7 @@ void GameObject::update(float dt) {
 }
 
 void GameObject::start() {
+    std::cout << this->uid << std::endl;
     int length = this->components->getSize();
     for (int i = 0; i < length; i++) {
         Component* comp = this->components->get(i);

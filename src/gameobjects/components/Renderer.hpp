@@ -23,7 +23,7 @@ class Renderer : public Component
     //TODO: go add set alpha
     // renderer->setAlphaBlend(0.5f);
 private:
-    ArrayList<Texture*> textures;
+    ArrayList<Texture*>* textures;
     Shader* shader;
     unsigned int VBO, VAO;
     float* vertices;

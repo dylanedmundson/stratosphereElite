@@ -27,7 +27,6 @@ protected:
     Color* c;
     glm::mat4 translate;
     virtual void generateRenderer();
-    virtual void generateShader();
     void processKeyInput(float dt);
     void updateVectors();
 public:

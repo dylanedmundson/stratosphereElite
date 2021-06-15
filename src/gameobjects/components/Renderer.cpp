@@ -8,6 +8,7 @@ Renderer::Renderer() {
     this->hasColor = false;
     this->hasTex = false;
     this->alphaBlend = 0;
+    this->textures = new ArrayList<Texture*>();
 }
 Renderer::Renderer(Shader* shader) {
     this->shader = shader;
@@ -15,6 +16,7 @@ Renderer::Renderer(Shader* shader) {
     this->hasColor = false;
     this->hasTex = false;
     this->alphaBlend = 0;
+    this->textures = new ArrayList<Texture*>();
 }
 
 void Renderer::setShader(Shader* shader) {
@@ -22,13 +24,16 @@ void Renderer::setShader(Shader* shader) {
 }
 
 void Renderer::addTexture(Texture* tex) {
-    this->textures.add(tex);
+    this->textures->add(tex);
 }
+
 Renderer::~Renderer() {
     glDeleteVertexArrays(1, &this->VAO);
     glDeleteBuffers(1, &this->VBO);
     vertices = nullptr;
     shader = nullptr;
+    delete this->textures;
+    this->textures = nullptr;
 }
 
 void Renderer::update(float dt) {
@@ -76,7 +81,7 @@ void Renderer::start() {
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (6 * sizeof(float)));
         glEnableVertexAttribArray(2);
     }
-    int texLen = this->textures.getSize();
+    int texLen = this->textures->getSize();
     this->shader->use();
     for (int i = 0; i < texLen; i++) {
         std::string texName = "texture";
@@ -95,11 +100,11 @@ void Renderer::setVertices(float* vertices, int sizeofVertices) {
 
 void Renderer::render() {
     this->shader->use();
-    int texLen = this->textures.getSize();
-    this->shader->setBool("hasTex", this->hasTex);
+    int texLen = this->textures->getSize();
+    this->shader->setInt("hasTex", this->hasTex);
     for (int i = 0; i < texLen; i++) {
         glActiveTexture(GL_TEXTURE0 + i);
-        this->textures.get(i)->bind();
+        this->textures->get(i)->bind();
     }
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);

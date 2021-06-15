@@ -38,6 +38,7 @@ Cube::Cube(Color* color, int width, int height, int depth, int winWidth, int win
     this->prevPitch = 0.0f;
     this->prevRoll = 0.0f;
     this->textures = new ArrayList<Texture*>();
+    this->renderer = nullptr;
 }
 
 Cube::~Cube()
@@ -87,7 +88,9 @@ void Cube::generateRenderer() {
     float b = (float)this->c->getBluef();
     float shade = 0.1;
     float* vertices;
+    int sizeOfVertices;
     if (this->textures->getSize() >= 1) {
+        sizeOfVertices = 288;
          vertices = new float[288]{
             //position                  //vert color
             //front face
@@ -138,6 +141,7 @@ void Cube::generateRenderer() {
              wHalf, -hHalf, -dHalf,     r - shade, g - shade, b - shade,    1.0f, 1.0f
         };
     } else {
+        sizeOfVertices = 216;
         vertices = new float[216]{
             //position                  //vert color
             //front face
@@ -188,19 +192,23 @@ void Cube::generateRenderer() {
             wHalf, -hHalf, -dHalf,     r - shade, g - shade, b - shade
         };
     }
-    generateShader();
+    this->shader = AssetPool::getShader("shaders/primitive");
+    if (this->renderer != nullptr) {
+        delete this->renderer;
+        this->renderer = nullptr;
+    }
     this->renderer = new Renderer(this->shader);
     if (this->textures->getSize() >= 1) {
         this->renderer->enableTexture();
     }
-    this->renderer->setVertices(vertices, 216);
+    int texLen = this->textures->getSize();
+    for (int i = 0; i < texLen; i++) {
+        this->renderer->addTexture(this->textures->get(i));
+    }
+    this->renderer->setVertices(vertices, sizeOfVertices);
     this->renderer->setUsage(GL_STATIC_DRAW);
     this->renderer->enableColor();
     components->add(this->renderer);
-}
-
-void Cube::generateShader() {
-    this->shader = AssetPool::getShader("shaders/primitive");
 }
 
 void Cube::setPos(glm::vec3 pos) {
@@ -324,10 +332,6 @@ void Cube::updateVectors() {
         glm::vec4(this->position, 1.0f) // new origin (center of cube) 
     );
 
-    // std::cout << this->objRight.x << ", " << this->objUp.x << ", " << this->objFront.x << ", " << this->position.x << std::endl;
-    // std::cout << this->objRight.y << ", " << this->objUp.y << ", " << this->objFront.y << ", " << this->position.y << std::endl;
-    // std::cout << this->objRight.z << ", " << this->objUp.z << ", " << this->objFront.z << ", " << this->position.z << std::endl;
-    // std::cout << "0"              << ", " << "0"           << ", " << "0"              << ", " <<  "1"             <<std::endl;
     //if for some reason we want to chang point of rotation from center we can translate the model matrix
     this->prevYaw = this->yaw;
     this->prevPitch = this->pitch;
@@ -350,7 +354,4 @@ void Cube::pitchRot(float pitch) {
 void Cube::addTexture(Texture* tex) {
     this->textures->add(tex);
     this->addComponent(tex);
-    if (this->textures->getSize() == 1) {
-        this->generateRenderer();
-    }
 }

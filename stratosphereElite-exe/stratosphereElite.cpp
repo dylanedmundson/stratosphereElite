@@ -12,6 +12,8 @@
 #include "gameobjects/primitives/Cube.hpp"
 #include "engine/Camera.hpp"
 using namespace std;
+//TODO: set up textures so we can have multiple and
+//they will all mix using defined alpha values
 
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
@@ -19,13 +21,13 @@ const char* TITLE = "LearnOpenGL";
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-//TODO: impelement a way for cubes to have a texture
-
 int main() {
     Window window = Window(WIDTH, HEIGHT, TITLE);
     window.init();
 
     GameObject* cube = new Cube(new Color(64, 0, 64), 800, 100, 400, WIDTH, HEIGHT, window.getWindow());
+    cube->start();
+    ((Cube*)cube)->enableKeyInput();
     for (int i = 0; i < 100; i++) {
         GameObject* cube2 = new Cube(new Color(0, 64, 64), abs(rand() % 799) + 1, abs(rand() % 799) + 1, abs(rand() % 799) + 1, WIDTH, HEIGHT, window.getWindow());
         ((Cube*)cube2)->setPos(glm::vec3((float)(rand() % 20), (float)(rand() % 20), -(float)(rand() % 100)));
@@ -36,9 +38,10 @@ int main() {
         window.addGameObject(cube2);
     }
     GameObject* skyBox = new Cube(new Color(20, 20, 130), 100 * WIDTH, 100 * WIDTH, 100 * WIDTH, WIDTH, HEIGHT, window.getWindow());
+    Texture* skyBoxTex = new Texture();
+    skyBoxTex->init("assets/wall.jpg", TEX_LINEAR, RGB);
+    ((Cube*)skyBox)->addTexture(skyBoxTex);
     skyBox->start();
-    cube->start();
-    ((Cube*)cube)->enableKeyInput();
     window.addGameObject(cube);
     window.addGameObject(skyBox);
 
@@ -52,11 +55,10 @@ int main() {
     camera->addShader(shader);
     camera->attachToGameObject(cube);
     camera->enableCameraFilightControls();
-    Texture* skyBoxTex = new Texture();
-    skyBoxTex->init("assets/wall.jpg", TEX_LINEAR, RGB);
-    ((Cube*)skyBox)->addTexture(skyBoxTex);
-    ((Cube*)cube)->addTexture(skyBoxTex);//TODO: problem is texture doesn't map to dimentions
-
+    // Texture* skyBoxTex = new Texture();
+    // skyBoxTex->init("assets/wall.jpg", TEX_LINEAR, RGB);
+    // ((Cube*)skyBox)->addTexture(skyBoxTex);
+    //TODO: problem is texture doesn't map to dimentions
     double updateTimeCount = 0.0;
     while (!window.shouldClose()) 
     {
