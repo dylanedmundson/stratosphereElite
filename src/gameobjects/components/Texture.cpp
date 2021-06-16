@@ -36,7 +36,6 @@ void Texture::init(std::string filePath, TEX_TYPE type, IMG_FORMAT imgFormat) {
     }
     stbi_image_free(data);
     this->unbind();
-    
 }
 
 void Texture::bind() {
@@ -65,4 +64,8 @@ void Texture::update(float dt) {
 
 void Texture::start() {
     Component::start();
+}
+
+std::string Texture::getName() {
+    return Component::TEXTURE_NAME;
 }

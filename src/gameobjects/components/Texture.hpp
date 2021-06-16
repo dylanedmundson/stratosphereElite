@@ -22,5 +22,7 @@ public:
     void update(float dt);
     void start();
     unsigned int getID();
+    std::string getName();
+    void blend(Texture* tex, float alpha);
 };
 #endif

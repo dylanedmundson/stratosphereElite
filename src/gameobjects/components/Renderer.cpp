@@ -2,38 +2,30 @@
 #include <glad/glad.h>
 #include <iostream>
 #include <string>
+#include "gameobjects/GameObject.hpp"
 
 Renderer::Renderer() {
     this->vertices = nullptr;
     this->hasColor = false;
     this->hasTex = false;
-    this->alphaBlend = 0;
-    this->textures = new ArrayList<Texture*>();
 }
 Renderer::Renderer(Shader* shader) {
     this->shader = shader;
     this->vertices = nullptr;
     this->hasColor = false;
     this->hasTex = false;
-    this->alphaBlend = 0;
-    this->textures = new ArrayList<Texture*>();
 }
 
 void Renderer::setShader(Shader* shader) {
     this->shader = shader;
 }
 
-void Renderer::addTexture(Texture* tex) {
-    this->textures->add(tex);
-}
-
 Renderer::~Renderer() {
     glDeleteVertexArrays(1, &this->VAO);
     glDeleteBuffers(1, &this->VBO);
-    vertices = nullptr;
-    shader = nullptr;
-    delete this->textures;
-    this->textures = nullptr;
+    this->vertices = nullptr;
+    this->shader = nullptr;
+    this->texture = nullptr;
 }
 
 void Renderer::update(float dt) {
@@ -81,16 +73,14 @@ void Renderer::start() {
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (6 * sizeof(float)));
         glEnableVertexAttribArray(2);
     }
-    int texLen = this->textures->getSize();
     this->shader->use();
-    for (int i = 0; i < texLen; i++) {
-        std::string texName = "texture";
-        std::string val = std::to_string(i + 1);
-        texName += val;
-        std::cout << texName << std::endl;
-        shader->setInt(texName.c_str(), i);
+    if (this->hasTex) {
+        this->texture = (Texture*)this->getGo()->getComponent(Component::TEXTURE_NAME);
+        if (this->texture == nullptr) {
+            throw std::runtime_error("ERROR AT RENDERER: texture enabled but not added to object");
+        }
+        shader->setInt("texture1", 0);
     }
-    shader->setFloat("alphaBlend", this->alphaBlend);
 }
 
 void Renderer::setVertices(float* vertices, int sizeofVertices) {
@@ -100,15 +90,17 @@ void Renderer::setVertices(float* vertices, int sizeofVertices) {
 
 void Renderer::render() {
     this->shader->use();
-    int texLen = this->textures->getSize();
-    this->shader->setInt("hasTex", this->hasTex);
-    for (int i = 0; i < texLen; i++) {
-        glActiveTexture(GL_TEXTURE0 + i);
-        this->textures->get(i)->bind();
+    this->shader->setBool("hasTex", this->hasTex);
+    if (this->hasTex) {
+        glActiveTexture(GL_TEXTURE0);
+        this->texture->bind();
     }
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
+    if (this->hasTex) {
+        this->texture->unbind();
+    }
 }
 
 void Renderer::enableColor() {
@@ -123,10 +115,6 @@ void Renderer::setUsage(GLenum usage) {
     this->usage = usage;
 }
 
-void Renderer::setAlphaBlend(float alpha) {
-    this->alphaBlend = alpha;
-}
-
 void Renderer::disableColor() {
     this->hasColor = false;
 }
@@ -137,4 +125,8 @@ void Renderer::disableTexture() {
 
 unsigned int Renderer::getVAO() {
     return this->VAO;
+}
+
+std::string Renderer::getName() {
+    return Component::RENDERER_NAME;
 }

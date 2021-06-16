@@ -9,16 +9,20 @@
 #include <iostream>
 #include <string.h>
 
+class GameObject;
+
 class Component
 {
 private:
     int uid;
     static unsigned int ID_COUNTER;
-    std::string name;
+protected:
+    int goUid;
 public:
     //constants used for getting components by name
     static const char* RENDERER_NAME;
     static const char* TEXTURE_NAME;
+    static const char* DEFAULT_NAME;
 
     //functions
     Component();
@@ -26,8 +30,9 @@ public:
     ~Component();
     virtual void update(float dt);
     virtual void start();
-    void setName(std::string newName);
-    std::string getName();
+    virtual std::string getName();
     bool operator ==(Component right);
+    void setGo(int goUid);
+    GameObject* getGo();
 };
 #endif

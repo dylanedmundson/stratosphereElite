@@ -23,7 +23,7 @@ class Renderer : public Component
     //TODO: go add set alpha
     // renderer->setAlphaBlend(0.5f);
 private:
-    ArrayList<Texture*>* textures;
+    Texture* texture;
     Shader* shader;
     unsigned int VBO, VAO;
     float* vertices;
@@ -31,13 +31,11 @@ private:
     bool hasColor;
     bool hasTex;
     GLenum usage;
-    float alphaBlend;
     int sizeofVertices;
 public:
     Renderer();
     Renderer(Shader* shader);
     void setShader(Shader* shader);
-    void addTexture(Texture* tex);
     ~Renderer();
     void setVertices(float* vertices, int sizeofVertices);
     virtual void update(float dt);
@@ -47,7 +45,7 @@ public:
     void disableColor();
     void disableTexture();
     void setUsage(GLenum usage);
-    void setAlphaBlend(float alpha);
+    std::string getName();
     unsigned int getVAO();
 };
 

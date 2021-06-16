@@ -56,9 +56,15 @@ void Camera::update(float dt) {
     this->processKeyInput(dt);
     if (this->go != nullptr) {
         this->cameraFront = go->getFront();
-        this->cameraPos = go->getPosition() + (this->cameraFront * -3.0f);
         this->cameraUp = go->getUp();
-        //FIXME: either up bector in go is not updating or its not updating here
+        this->cameraPos = go->getPosition() + (this->cameraFront * -3.0f) + this->cameraUp;
+        glm::mat4 rot = glm::rotate(glm::mat4(1.0f), atanf(1.0f / -3.0f), glm::cross(this->cameraFront, this->cameraUp));
+        glm::vec4 up(this->cameraUp, 1.0f);
+        glm::vec4 front(this->cameraFront, 1.0f);
+        up = rot * up;
+        front = rot * front;
+        this->cameraUp.x = up.x, this->cameraUp.y = up.y, this->cameraUp.z = up.z;
+        this->cameraFront.x = front.x, this->cameraFront.y = front.y, this->cameraFront.z = front.z;
     }
     glm::mat4 view = glm::lookAt(
         this->cameraPos,

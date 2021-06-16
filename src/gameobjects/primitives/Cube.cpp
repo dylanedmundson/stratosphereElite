@@ -9,8 +9,6 @@
 //with model matrix
 
 float timeElapsed = 0.0f;
-Cube::Cube() {
-}
 
 Cube::Cube(Color* color, int width, int height, int depth, int winWidth, int winHeight, GLFWwindow* window)
 {
@@ -37,7 +35,6 @@ Cube::Cube(Color* color, int width, int height, int depth, int winWidth, int win
     this->prevYaw = 0.0f;
     this->prevPitch = 0.0f;
     this->prevRoll = 0.0f;
-    this->textures = new ArrayList<Texture*>();
     this->renderer = nullptr;
 }
 
@@ -89,7 +86,7 @@ void Cube::generateRenderer() {
     float shade = 0.1;
     float* vertices;
     int sizeOfVertices;
-    if (this->textures->getSize() >= 1) {
+    if (hasTex) {
         sizeOfVertices = 288;
          vertices = new float[288]{
             //position                  //vert color
@@ -198,17 +195,13 @@ void Cube::generateRenderer() {
         this->renderer = nullptr;
     }
     this->renderer = new Renderer(this->shader);
-    if (this->textures->getSize() >= 1) {
-        this->renderer->enableTexture();
-    }
-    int texLen = this->textures->getSize();
-    for (int i = 0; i < texLen; i++) {
-        this->renderer->addTexture(this->textures->get(i));
-    }
     this->renderer->setVertices(vertices, sizeOfVertices);
     this->renderer->setUsage(GL_STATIC_DRAW);
     this->renderer->enableColor();
-    components->add(this->renderer);
+    if (this->hasTex) {
+        this->renderer->enableTexture();
+    }
+    this->addComponent(this->renderer);
 }
 
 void Cube::setPos(glm::vec3 pos) {
@@ -349,9 +342,4 @@ void Cube::yawRot(float yaw) {
 void Cube::pitchRot(float pitch) {
     this->pitch += pitch;
     this->pitchIsDirty = true;
-}
-
-void Cube::addTexture(Texture* tex) {
-    this->textures->add(tex);
-    this->addComponent(tex);
 }

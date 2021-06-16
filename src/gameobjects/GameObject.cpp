@@ -1,4 +1,15 @@
 #include "GameObject.hpp"
+ArrayList<GameObject*>* GameObject::GAME_OBJECTS = new ArrayList<GameObject*>();
+GameObject* GameObject::getGameObject(int uid) {
+    int len = GameObject::GAME_OBJECTS->getSize();
+    for (int i = 0; i < len; i++) {
+        GameObject* go = GAME_OBJECTS->get(i);
+        if (go->getUid() == uid) {
+            return go;
+        }
+    }
+    return nullptr;
+}
 
 unsigned int GameObject::ID_COUNTER = 0;
 GameObject::GameObject()
@@ -6,6 +17,8 @@ GameObject::GameObject()
     this->components = new ArrayList<Component*>();
     uid = ID_COUNTER;
     ID_COUNTER++;
+    this->hasTex = false;
+    GameObject::GAME_OBJECTS->add(this);
 }
 
 GameObject::~GameObject()
@@ -20,6 +33,10 @@ GameObject::~GameObject()
 
 void GameObject::addComponent(Component* c) {
     this->components->add(c);
+    c->setGo(this->uid);
+    if (c->getName() == Component::TEXTURE_NAME) {
+        this->hasTex = true;
+    }
 }
 
 Component* GameObject::removeComponent(Component* c) {
@@ -35,7 +52,6 @@ void GameObject::update(float dt) {
 }
 
 void GameObject::start() {
-    std::cout << this->uid << std::endl;
     int length = this->components->getSize();
     for (int i = 0; i < length; i++) {
         Component* comp = this->components->get(i);
@@ -49,16 +65,6 @@ bool GameObject::operator ==(GameObject rightHand) {
 
 int GameObject::getUid() {
     return this->uid;
-}
-
-Component* GameObject::getComponent(std::string name) {
-    int len = this->components->getSize();
-    for (int i = 0; i < len; i++) {
-        if (this->components->get(i)->getName() == name.c_str()) {
-            return this->components->get(i);
-        }
-    }
-    return nullptr;
 }
 
 ArrayList<Component*>* GameObject::getAllComponents() {
@@ -95,4 +101,15 @@ glm::vec3 GameObject::getUp() {
 
 glm::vec3 GameObject::getRight() {
     return this->objRight;
+}
+
+Component* GameObject::getComponent(std::string name) {
+    int compLen = this->components->getSize();
+    for (int i = 0; i < compLen; i++) {
+        Component* comp = this->components->get(i);
+        if (comp->getName() == name.c_str()) {
+            return comp;
+        }
+    }
+    return nullptr;
 }

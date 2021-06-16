@@ -22,7 +22,6 @@ protected:
     bool yawIsDirty = false;
     bool pitchIsDirty = false;
     bool rollIsDirty = false;
-    ArrayList<Texture*>* textures;
     GLFWwindow* window;
     Color* c;
     glm::mat4 translate;
@@ -30,7 +29,6 @@ protected:
     void processKeyInput(float dt);
     void updateVectors();
 public:
-    Cube();
     Cube(Color* color, int width, int height, int depth, int windowWidth, int windowHeight, GLFWwindow* window);
     void setWidth(int width);
     void setHeight(int height);

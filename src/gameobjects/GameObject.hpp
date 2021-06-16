@@ -32,16 +32,19 @@ protected:
     float prevYaw;
     float prevPitch;
     float prevRoll;
+    bool hasTex;
 private:
     int uid;
     static unsigned int ID_COUNTER;
 public:
+    static ArrayList<GameObject*>* GAME_OBJECTS;
+    static GameObject* getGameObject(int uid);
+
     GameObject();
     ~GameObject();
     void addComponent(Component* c);
     Component* removeComponent(Component* c);
     ArrayList<Component*>* getAllComponents();
-    Component* getComponent(std::string);
     bool operator ==(GameObject rightHand);
     int getUid();
     Renderer* getRenderer();
@@ -50,7 +53,7 @@ public:
     glm::vec3 getFront();
     glm::vec3 getUp();
     glm::vec3 getRight();
-
+    Component* getComponent(std::string compName);
     virtual void update(float dt);
     virtual void start();
 };

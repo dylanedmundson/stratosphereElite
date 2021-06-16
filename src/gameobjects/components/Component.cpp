@@ -1,6 +1,8 @@
 #include "Component.hpp"
+#include "gameobjects/GameObject.hpp"
 
 unsigned int Component::ID_COUNTER = 0;
+const char* Component::DEFAULT_NAME = "component";
 const char* Component::RENDERER_NAME = "renderer";
 const char* Component::TEXTURE_NAME = "texture";
 
@@ -30,10 +32,14 @@ void Component::start() {
     
 }
 
-void Component::setName(std::string newName) {
-    this->name = newName;
+std::string Component::getName() {
+    return Component::DEFAULT_NAME;
 }
 
-std::string Component::getName() {
-    return this->name;
+void Component::setGo(int goUid) {
+    this->goUid = goUid;
+}
+
+GameObject* Component::getGo() {
+    return GameObject::getGameObject(this->goUid);
 }

@@ -12,20 +12,25 @@
 #include "gameobjects/primitives/Cube.hpp"
 #include "engine/Camera.hpp"
 using namespace std;
-//TODO: set up textures so we can have multiple and
-//they will all mix using defined alpha values
 
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
 const char* TITLE = "LearnOpenGL";
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+//TODO: problem is defintely with rendernig and not the camera, need to figure out what is happening with cube disapearing with pith plus roll/yaw rotations at same time
+//alternatively restrict to one rotation at a time It looks like quaternions is the solutions here
+
+//TODO: also having some problems with pretty consistnet lag, but fps never drops below 500. maybe issue with gpu? updating texture too often? happens even when
+//dropping number of cubes rendered, maybe a for loop somewhere thats running for a long period of time for some reason?
+//happens without textures as well, so texture rendering is not the problem. Maybe updating is too fast for gpu, could try only updating after x amount of time has passed
 
 int main() {
     Window window = Window(WIDTH, HEIGHT, TITLE);
     window.init();
 
     GameObject* cube = new Cube(new Color(64, 0, 64), 800, 100, 400, WIDTH, HEIGHT, window.getWindow());
+    Texture* tex;
     cube->start();
     ((Cube*)cube)->enableKeyInput();
     for (int i = 0; i < 100; i++) {
@@ -34,17 +39,19 @@ int main() {
         ((Cube*)cube2)->rollRot((float)(rand() % 360));
         ((Cube*)cube2)->pitchRot((float)(rand() % 360));
         ((Cube*)cube2)->yawRot((float)(rand() % 360));
+        tex = new Texture();
+        tex->init("assets/wall.jpg", TEX_LINEAR, RGB);
+        cube2->addComponent(tex);
         cube2->start();
         window.addGameObject(cube2);
     }
-    GameObject* skyBox = new Cube(new Color(20, 20, 130), 100 * WIDTH, 100 * WIDTH, 100 * WIDTH, WIDTH, HEIGHT, window.getWindow());
+    GameObject* skyBox = new Cube(new Color(20, 20, 130), 10 * WIDTH, 100 * WIDTH, 100 * WIDTH, WIDTH, HEIGHT, window.getWindow());
     Texture* skyBoxTex = new Texture();
-    skyBoxTex->init("assets/wall.jpg", TEX_LINEAR, RGB);
-    ((Cube*)skyBox)->addTexture(skyBoxTex);
+    skyBoxTex->init("assets/space.jpg", TEX_LINEAR, RGB);
+    skyBox->addComponent(skyBoxTex);
     skyBox->start();
     window.addGameObject(cube);
     window.addGameObject(skyBox);
-
 
 
     glm::mat4 view;
@@ -54,12 +61,7 @@ int main() {
     Camera* camera = new Camera(window.getWindow(), (float)WIDTH / (float)HEIGHT);
     camera->addShader(shader);
     camera->attachToGameObject(cube);
-    camera->enableCameraFilightControls();
-    // Texture* skyBoxTex = new Texture();
-    // skyBoxTex->init("assets/wall.jpg", TEX_LINEAR, RGB);
-    // ((Cube*)skyBox)->addTexture(skyBoxTex);
-    //TODO: problem is texture doesn't map to dimentions
-    double updateTimeCount = 0.0;
+    // camera->enableCameraFilightControls();
     while (!window.shouldClose()) 
     {
         // if (glfwGetKey(window.getWindow(), GLFW_KEY_C)) {
@@ -68,6 +70,7 @@ int main() {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        std::cout << (1.0f / deltaTime) << std::endl;
         camera->update(deltaTime);
         window.update(deltaTime);
 }
