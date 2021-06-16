@@ -13,6 +13,7 @@ private:
     std::string filePath;
     unsigned int texID;
     int width, height;
+    float fitVal;
 public:
     void init(std::string filePath, TEX_TYPE type, IMG_FORMAT imgFormat);
     void bind();
@@ -20,6 +21,8 @@ public:
     int getWidth();
     int getHeight();
     void update(float dt);
+    void setFitVal(float val);
+    float getFitVal();
     void start();
     unsigned int getID();
     std::string getName();

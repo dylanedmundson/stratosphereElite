@@ -36,6 +36,7 @@ void Texture::init(std::string filePath, TEX_TYPE type, IMG_FORMAT imgFormat) {
     }
     stbi_image_free(data);
     this->unbind();
+    this->fitVal = 1.0f;
 }
 
 void Texture::bind() {
@@ -68,4 +69,12 @@ void Texture::start() {
 
 std::string Texture::getName() {
     return Component::TEXTURE_NAME;
+}
+
+void Texture::setFitVal(float val) {
+    this->fitVal = val;
+}
+
+float Texture::getFitVal() {
+    return this->fitVal;
 }

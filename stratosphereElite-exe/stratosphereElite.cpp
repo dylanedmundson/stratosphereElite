@@ -45,9 +45,10 @@ int main() {
         cube2->start();
         window.addGameObject(cube2);
     }
-    GameObject* skyBox = new Cube(new Color(20, 20, 130), 10 * WIDTH, 100 * WIDTH, 100 * WIDTH, WIDTH, HEIGHT, window.getWindow());
+    GameObject* skyBox = new Cube(new Color(20, 20, 130), 70* WIDTH, 70 * WIDTH, 70 * WIDTH, WIDTH, HEIGHT, window.getWindow());
     Texture* skyBoxTex = new Texture();
     skyBoxTex->init("assets/space.jpg", TEX_LINEAR, RGB);
+    skyBoxTex->setFitVal(10.0f);
     skyBox->addComponent(skyBoxTex);
     skyBox->start();
     window.addGameObject(cube);

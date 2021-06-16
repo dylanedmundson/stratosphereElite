@@ -87,55 +87,57 @@ void Cube::generateRenderer() {
     float* vertices;
     int sizeOfVertices;
     if (hasTex) {
+        Texture* tex = (Texture*)this->getComponent(Component::TEXTURE_NAME);
+        float th = tex->getFitVal();
         sizeOfVertices = 288;
          vertices = new float[288]{
             //position                  //vert color
             //front face
             -wHalf, -hHalf,  dHalf,     r, g, b,        0.0f, 0.0f,
-            -wHalf,  hHalf,  dHalf,     r, g, b,        0.0f, 1.0f,
-             wHalf,  hHalf,  dHalf,     r, g, b,        1.0f, 1.0f,
-             wHalf,  hHalf,  dHalf,     r, g, b,        1.0f, 1.0f,
+            -wHalf,  hHalf,  dHalf,     r, g, b,        0.0f, th,
+             wHalf,  hHalf,  dHalf,     r, g, b,        th, th,
+             wHalf,  hHalf,  dHalf,     r, g, b,        th, th,
             -wHalf, -hHalf,  dHalf,     r, g, b,        0.0f, 0.0f,
-             wHalf, -hHalf,  dHalf,     r, g, b,        1.0f, 0.0f,
+             wHalf, -hHalf,  dHalf,     r, g, b,        th, 0.0f,
 
             //back face
             -wHalf, -hHalf, -dHalf,     r, g, b,        0.0f, 0.0f,
-            -wHalf,  hHalf, -dHalf,     r, g, b,        0.0f, 1.0f,
-             wHalf,  hHalf, -dHalf,     r, g, b,        1.0f, 1.0f,
-             wHalf,  hHalf, -dHalf,     r, g, b,        1.0f, 1.0f,
+            -wHalf,  hHalf, -dHalf,     r, g, b,        0.0f, th,
+             wHalf,  hHalf, -dHalf,     r, g, b,        th, th,
+             wHalf,  hHalf, -dHalf,     r, g, b,        th, th,
             -wHalf, -hHalf, -dHalf,     r, g, b,        0.0f, 0.0f,
-             wHalf, -hHalf, -dHalf,     r, g, b,        1.0f, 0.0f,
+             wHalf, -hHalf, -dHalf,     r, g, b,        th, 0.0f,
             //left face
-            -wHalf,  hHalf,  dHalf,     r + shade, g + shade, b + shade,    0.0f, 1.0f,
+            -wHalf,  hHalf,  dHalf,     r + shade, g + shade, b + shade,    0.0f, th,
             -wHalf, -hHalf,  dHalf,     r + shade, g + shade, b + shade,    0.0f, 0.0f,
-            -wHalf, -hHalf, -dHalf,     r + shade, g + shade, b + shade,    1.0f, 0.0f,
-            -wHalf,  hHalf,  dHalf,     r + shade, g + shade, b + shade,    0.0f, 1.0f,
-            -wHalf, -hHalf, -dHalf,     r + shade, g + shade, b + shade,    1.0f, 0.0f,
-            -wHalf,  hHalf, -dHalf,     r + shade, g + shade, b + shade,    1.0f, 1.0f,
+            -wHalf, -hHalf, -dHalf,     r + shade, g + shade, b + shade,    th, 0.0f,
+            -wHalf,  hHalf,  dHalf,     r + shade, g + shade, b + shade,    0.0f, th,
+            -wHalf, -hHalf, -dHalf,     r + shade, g + shade, b + shade,    th, 0.0f,
+            -wHalf,  hHalf, -dHalf,     r + shade, g + shade, b + shade,    th, th,
 
             //right face
-             wHalf,  hHalf,  dHalf,     r + shade, g + shade, b + shade,    0.0f, 1.0f,
+             wHalf,  hHalf,  dHalf,     r + shade, g + shade, b + shade,    0.0f, th,
              wHalf, -hHalf,  dHalf,     r + shade, g + shade, b + shade,    0.0f, 0.0f,
-             wHalf, -hHalf, -dHalf,     r + shade, g + shade, b + shade,    1.0f, 0.0f,
-             wHalf,  hHalf,  dHalf,     r + shade, g + shade, b + shade,    0.0f, 1.0f,
-             wHalf, -hHalf, -dHalf,     r + shade, g + shade, b + shade,    1.0f, 0.0f,
-             wHalf,  hHalf, -dHalf,     r + shade, g + shade, b + shade,    1.0f, 1.0f,
+             wHalf, -hHalf, -dHalf,     r + shade, g + shade, b + shade,    th, 0.0f,
+             wHalf,  hHalf,  dHalf,     r + shade, g + shade, b + shade,    0.0f, th,
+             wHalf, -hHalf, -dHalf,     r + shade, g + shade, b + shade,    th, 0.0f,
+             wHalf,  hHalf, -dHalf,     r + shade, g + shade, b + shade,    th, th,
 
             //top face
             -wHalf,  hHalf,  dHalf,     r - shade, g - shade, b - shade,    0.0f, 0.0f,
-            -wHalf,  hHalf, -dHalf,     r - shade, g - shade, b - shade,    0.0f, 1.0f,
-             wHalf,  hHalf,  dHalf,     r - shade, g - shade, b - shade,    1.0f, 0.0f,
-             wHalf,  hHalf,  dHalf,     r - shade, g - shade, b - shade,    1.0f, 0.0f,
-            -wHalf,  hHalf, -dHalf,     r - shade, g - shade, b - shade,    0.0f, 1.0f,
-             wHalf,  hHalf, -dHalf,     r - shade, g - shade, b - shade,    1.0f, 1.0f,
+            -wHalf,  hHalf, -dHalf,     r - shade, g - shade, b - shade,    0.0f, th,
+             wHalf,  hHalf,  dHalf,     r - shade, g - shade, b - shade,    th, 0.0f,
+             wHalf,  hHalf,  dHalf,     r - shade, g - shade, b - shade,    th, 0.0f,
+            -wHalf,  hHalf, -dHalf,     r - shade, g - shade, b - shade,    0.0f, th,
+             wHalf,  hHalf, -dHalf,     r - shade, g - shade, b - shade,    th, th,
 
             //top face
             -wHalf, -hHalf,  dHalf,     r - shade, g - shade, b - shade,    0.0f, 0.0f,
-            -wHalf, -hHalf, -dHalf,     r - shade, g - shade, b - shade,    0.0f, 1.0f,
-             wHalf, -hHalf,  dHalf,     r - shade, g - shade, b - shade,    1.0f, 0.0f,
-             wHalf, -hHalf,  dHalf,     r - shade, g - shade, b - shade,    1.0f, 0.0f,
-            -wHalf, -hHalf, -dHalf,     r - shade, g - shade, b - shade,    0.0f, 1.0f,
-             wHalf, -hHalf, -dHalf,     r - shade, g - shade, b - shade,    1.0f, 1.0f
+            -wHalf, -hHalf, -dHalf,     r - shade, g - shade, b - shade,    0.0f, th,
+             wHalf, -hHalf,  dHalf,     r - shade, g - shade, b - shade,    th, 0.0f,
+             wHalf, -hHalf,  dHalf,     r - shade, g - shade, b - shade,    th, 0.0f,
+            -wHalf, -hHalf, -dHalf,     r - shade, g - shade, b - shade,    0.0f, th,
+             wHalf, -hHalf, -dHalf,     r - shade, g - shade, b - shade,    th, th
         };
     } else {
         sizeOfVertices = 216;
